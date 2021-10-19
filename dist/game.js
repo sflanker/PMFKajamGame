@@ -2349,13 +2349,18 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   });
   var kaboom_default = xn();
 
+  // code/team-one.js
+  function example() {
+    add([
+      color(255, 100, 100),
+      rect(100, 50),
+      pos(100, 100)
+    ]);
+  }
+  __name(example, "example");
+
   // code/main.js
   kaboom_default();
-  loadSprite("bean", "sprites/bean.png");
-  add([
-    sprite("bean"),
-    pos(80, 40),
-    area()
-  ]);
+  example();
 })();
 //# sourceMappingURL=game.js.map
