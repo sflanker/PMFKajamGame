@@ -2351,11 +2351,6 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
 
   // code/team-one.js
   function example() {
-    add([
-      color(100, 100, 200),
-      rect(100, 50),
-      pos(100, 100)
-    ]);
   }
   __name(example, "example");
 
