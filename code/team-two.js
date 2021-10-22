@@ -1,3 +1,3 @@
-export default function loadTeamTwoObjects() {
+export function loadTeamTwoObjects() {
   // TODO
 }

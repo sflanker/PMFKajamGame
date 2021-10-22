@@ -2,6 +2,7 @@ import kaboom from "kaboom";
 import { example } from "./team-one"
 import { loadTeamTwoObjects } from "./team-two"
 //import runNalu from "./Nalu"
+import runLaa from "./Laa"
 import loadAssets from "./assets";
 
 // initialize context
@@ -42,6 +43,9 @@ example();
 
 // team two code 
 loadTeamTwoObjects();
+
+// Laa's code
+runLaa();
 
 // Nalu's code
 // runNalu();

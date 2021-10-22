@@ -2354,8 +2354,167 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }
   __name(example, "example");
 
+  // code/team-two.js
+  function loadTeamTwoObjects() {
+  }
+  __name(loadTeamTwoObjects, "loadTeamTwoObjects");
+
+  // code/assets.js
+  function loadAssets() {
+    loadSprite("bean", "sprites/bean.png");
+    loadSprite("googoly", "sprites/googoly.png");
+    loadSprite("grass", "sprites/grass.png");
+    loadSprite("apple", "sprites/apple.png");
+    loadSprite("portal", "sprites/portal.png");
+    loadSprite("coin", "sprites/coin.png");
+    loadSprite("tree", "sprites/Tree.png");
+    loadSprite("wood", "sprites/wood.png");
+    loadSprite("box", "sprites/box.png");
+  }
+  __name(loadAssets, "loadAssets");
+
+  // code/Laa.js
+  function runLaa() {
+    loadAssets();
+    const JUMP_FORCE = 1320;
+    const MOVE_SPEED = 480;
+    const FALL_DEATH = 2400;
+    const LEVEL = [
+      "                          $",
+      "                          $",
+      "                          $",
+      "                          $",
+      "                          $",
+      "                      =   $",
+      "         ====         =   $",
+      "                      =   $",
+      "                      =   $",
+      "     ^         = >    =   @",
+      "==========================="
+    ];
+    const levelConf = {
+      width: 64,
+      height: 64,
+      "=": () => [
+        sprite("grass"),
+        area(),
+        solid(),
+        origin("bot")
+      ],
+      "A": () => [
+        sprite("?"),
+        area(),
+        solid(),
+        pos(0, 0),
+        origin("bot")
+      ],
+      "$": () => [
+        sprite("coin"),
+        area(),
+        pos(0, -9),
+        origin("bot"),
+        "coin"
+      ],
+      "%": () => [
+        sprite("box"),
+        area(),
+        solid(),
+        origin("bot"),
+        "box"
+      ],
+      "^": () => [
+        sprite("tree"),
+        scale(10),
+        area(),
+        pos(0, -50),
+        origin("bot"),
+        "tree"
+      ],
+      "#": () => [
+        sprite("wood"),
+        area(),
+        scale(2),
+        origin("bot"),
+        body(),
+        "wood"
+      ],
+      ">": () => [
+        sprite("googoly"),
+        area(),
+        origin("bot"),
+        body(),
+        "enemy"
+      ],
+      "@": () => [
+        sprite("portal"),
+        area({ scale: 0.5 }),
+        origin("bot"),
+        pos(0, -12),
+        "portal"
+      ]
+    };
+    scene("game", () => {
+      gravity(3200);
+      const level = addLevel(LEVEL, levelConf);
+      const player = add([
+        sprite("bean"),
+        pos(0, 0),
+        area(),
+        scale(1),
+        body(),
+        origin("bot")
+      ]);
+      player.action(() => {
+        camPos(player.pos);
+        if (player.pos.y >= FALL_DEATH) {
+          go("lose");
+        }
+      });
+      player.on("ground", (l) => {
+        if (l.is("enemy")) {
+          player.jump(JUMP_FORCE * 1.5);
+          destroy(l);
+          addKaboom(player.pos);
+        }
+      });
+      keyPress("space", () => {
+        if (player.grounded()) {
+          player.jump(JUMP_FORCE);
+        }
+      });
+      keyDown("left", () => {
+        player.move(-MOVE_SPEED, 0);
+      });
+      keyDown("right", () => {
+        player.move(MOVE_SPEED, 0);
+      });
+      keyPress("down", () => {
+        player.weight = 3;
+      });
+      keyRelease("down", () => {
+        player.weight = 1;
+      });
+    });
+    scene("lose", () => {
+      add([
+        text("You Lose")
+      ]);
+      keyPress(() => go("game"));
+    });
+    scene("win", () => {
+      add([
+        text("You Win")
+      ]);
+      keyPress(() => go("game"));
+    });
+    go("game");
+  }
+  __name(runLaa, "runLaa");
+
   // code/main.js
   kaboom_default();
   example();
+  loadTeamTwoObjects();
+  runLaa();
 })();
 //# sourceMappingURL=game.js.map
