@@ -1,5 +1,11 @@
 
 // Helper function to create a level
-export default function loadLevel(terrainSprite) {
+export async function loadLevel(terrainPath) {
+  let terrainImage = await loadImage(terrainPath);
+
+  return;
+}
+
+function loadImage(terrainPath) {
 
 }
