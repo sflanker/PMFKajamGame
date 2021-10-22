@@ -2,6 +2,7 @@ import kaboom from "kaboom";
 import { example } from "./team-one"
 //import runNalu from "./Nalu"
 import loadAssets from "./assets";
+import loadLevel from "./level-loader";
 
 // initialize context
 kaboom();
