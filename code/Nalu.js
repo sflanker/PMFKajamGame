@@ -19,7 +19,7 @@ export default function runNalu() {
       "                          $",
       "                      =   $",
       "         ====         =   $",
-      "     %                =   $",
+      "                      =   $",
       "                      =    ",
       "     ^         = >    =   @",
       "===========================",
@@ -62,17 +62,10 @@ export default function runNalu() {
       origin("bot"),
       "coin",
     ],
-    "%": () => [
-      sprite("box"),
-      area(),
-      solid(),
-      origin("bot"),
-      "box",
-    ],
     "^": () => [
       sprite("tree"),
       scale(10),
-      area(),
+      area({ scale: 0.2 }),
       origin("bot"),
       "tree",
     ],
@@ -83,6 +76,12 @@ export default function runNalu() {
       origin("bot"),
       body(),
       "wood",
+    ],
+    "-": () => [
+      sprite("inventory"),
+      scale(2),
+      origin("botleft"),
+      "inventory",
     ],
     ">": () => [
       sprite("googoly"),
@@ -119,6 +118,7 @@ export default function runNalu() {
       // the custom component we defined above
       big(),
       origin("bot"),
+      "bean",
     ]);
 
     // action() runs every frame
@@ -172,16 +172,18 @@ export default function runNalu() {
 
     player.collides("wood", (w) => {
       destroy(w);
-      coins += 1;
-      coinsLabel.text = coins;
       hasWood = true
     });
-
-    const coinsLabel = add([
-      text(coins),
-      pos(24, 24),
-      fixed(),
-    ]);
+   //inventory script
+    player.collides("wood", (i) => {
+      destroy(i);
+       add([
+          sprite("inventory"),
+          origin("topleft"),
+          area(),
+          fixed(),
+        ]);
+    });
 
     // jump with space
     keyPress("space", () => {
@@ -211,21 +213,27 @@ export default function runNalu() {
       fullscreen(!fullscreen());
     });
 
-    keyPress("e", () => {
-      every("tree", (t) => {
+    keyPress("e", () => 
+    {
+      every("tree", (t) => 
+      {
         if (player.isColliding(t)){
-          player.collides("tree", (t) => {
-            if (t.is("tree") && !hasWood) {
-            const wood = level.spawn("#",  t.gridPos.sub(3, 1));
+          if (t.is("tree") && !hasWood) 
+          {
+            const wood = level.spawn("#",  t.gridPos.sub(0, 1));
             wood.jump();
             hasWood = true;
-        }
-      });
+          }
         }
       })
     });
 
   });
+
+    add([
+      sprite("inventory"),
+      origin("topleft")     
+  ]);
 
   scene("lose", () => {
     add([
