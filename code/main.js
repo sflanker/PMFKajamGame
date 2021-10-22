@@ -1,5 +1,6 @@
 import kaboom from "kaboom";
 import { example } from "./team-one"
+import { loadTeamTwoObjects } from "./team-two"
 //import runNalu from "./Nalu"
 import loadAssets from "./assets";
 
@@ -38,6 +39,9 @@ kaboom();
 
 // team one code
 example();
+
+// team two code 
+loadTeamTwoObjects();
 
 // Nalu's code
 // runNalu();
