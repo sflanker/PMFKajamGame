@@ -1,7 +1,4 @@
-import loadAssets from "./assets";
-
-export default function runLaa() {
-  loadAssets();
+export default function initializeLaa() {
 
   // define some constants
   const JUMP_FORCE = 1320;
@@ -87,7 +84,7 @@ export default function runLaa() {
     ],
   };
 
-  scene("game", () => {
+  scene("laa", () => {
     gravity(3200);
 
     // add level to scene
@@ -146,24 +143,5 @@ export default function runLaa() {
     keyRelease("down", () => {
       player.weight = 1;
     });
-
-
-
   });
-
-  scene("lose", () => {
-    add([
-      text("You Lose"),
-    ]);
-    keyPress(() => go("game"));
-  });
-
-  scene("win", () => {
-    add([
-      text("You Win"),
-    ]);
-    keyPress(() => go("game"));
-  });
-
-  go("game");
 }
