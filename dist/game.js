@@ -9,20 +9,20 @@
   var Pt = Object.getOwnPropertySymbols;
   var Qr = Object.prototype.hasOwnProperty;
   var Kr = Object.prototype.propertyIsEnumerable;
-  var dt = /* @__PURE__ */ __name((e, r, t) => r in e ? Ct(e, r, { enumerable: true, configurable: true, writable: true, value: t }) : e[r] = t, "dt");
+  var dt2 = /* @__PURE__ */ __name((e, r, t) => r in e ? Ct(e, r, { enumerable: true, configurable: true, writable: true, value: t }) : e[r] = t, "dt");
   var Ce = /* @__PURE__ */ __name((e, r) => {
     for (var t in r || (r = {}))
-      Qr.call(r, t) && dt(e, t, r[t]);
+      Qr.call(r, t) && dt2(e, t, r[t]);
     if (Pt)
       for (var t of Pt(r))
-        Kr.call(r, t) && dt(e, t, r[t]);
+        Kr.call(r, t) && dt2(e, t, r[t]);
     return e;
   }, "Ce");
   var Re = /* @__PURE__ */ __name((e, r) => jr(e, Or(r)), "Re");
   var s = /* @__PURE__ */ __name((e, r) => Ct(e, "name", { value: r, configurable: true }), "s");
   var se = /* @__PURE__ */ __name((e, r) => () => (e && (r = e(e = 0)), r), "se");
   var en = /* @__PURE__ */ __name((e, r) => () => (r || e((r = { exports: {} }).exports, r), r.exports), "en");
-  var St = /* @__PURE__ */ __name((e, r, t) => (dt(e, typeof r != "symbol" ? r + "" : r, t), t), "St");
+  var St = /* @__PURE__ */ __name((e, r, t) => (dt2(e, typeof r != "symbol" ? r + "" : r, t), t), "St");
   var Dt = /* @__PURE__ */ __name((e, r, t) => new Promise((c, x) => {
     var P = /* @__PURE__ */ __name((S) => {
       try {
@@ -2349,13 +2349,266 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   });
   var kaboom_default = xn();
 
-  // code/team-one.js
-  function example() {
+  // code/patrol.js
+  function patrol(speed = 60, dir = 1) {
+    return {
+      id: "patrol",
+      require: ["pos", "area"],
+      add() {
+        this.on("collide", (obj, side) => {
+          if (side === "left" || side === "right") {
+            dir = -dir;
+          }
+        });
+      },
+      update() {
+        this.move(speed * dir, 0);
+      }
+    };
   }
-  __name(example, "example");
+  __name(patrol, "patrol");
+
+  // code/big.js
+  function big() {
+    let timer = 0;
+    let isBig = false;
+    let destScale = 1;
+    return {
+      id: "big",
+      require: ["scale"],
+      update() {
+        if (isBig) {
+          timer -= dt();
+          if (timer <= 0) {
+            this.smallify();
+          }
+        }
+        this.scale = this.scale.lerp(vec2(destScale), dt() * 6);
+      },
+      isBig() {
+        return isBig;
+      },
+      smallify() {
+        destScale = 1;
+        timer = 0;
+        isBig = false;
+      },
+      biggify(time) {
+        destScale = 2;
+        timer = time;
+        isBig = true;
+      }
+    };
+  }
+  __name(big, "big");
+
+  // code/assets.js
+  function loadAssets() {
+    loadSprite("bean", "sprites/bean.png");
+    loadSprite("googoly", "sprites/googoly.png");
+    loadSprite("grass", "sprites/grass.png");
+    loadSprite("apple", "sprites/apple.png");
+    loadSprite("portal", "sprites/portal.png");
+    loadSprite("coin", "sprites/coin.png");
+    loadSprite("tree", "sprites/Tree.png");
+    loadSprite("wood", "sprites/wood.png");
+    loadSprite("box", "sprites/box.png");
+    loadSprite("inventory", "sprites/inventory.png");
+  }
+  __name(loadAssets, "loadAssets");
+
+  // code/Nalu.js
+  function runNalu() {
+    loadAssets();
+    const JUMP_FORCE = 1320;
+    const MOVE_SPEED = 480;
+    const FALL_DEATH = 2400;
+    const LEVELS = [
+      [
+        "                          $",
+        "                          $",
+        "                          $",
+        "                          $",
+        "                          $",
+        "                      =   $",
+        "         ====         =   $",
+        "                      =   $",
+        "                      =    ",
+        "     ^         = >    =   @",
+        "==========================="
+      ]
+    ];
+    const levelConf = {
+      width: 64,
+      height: 64,
+      "=": () => [
+        sprite("grass"),
+        area(),
+        solid(),
+        origin("bot")
+      ],
+      "$": () => [
+        sprite("coin"),
+        area(),
+        pos(0, -9),
+        origin("bot"),
+        "coin"
+      ],
+      "^": () => [
+        sprite("tree"),
+        scale(10),
+        area({ scale: 0.2 }),
+        origin("bot"),
+        "tree"
+      ],
+      "#": () => [
+        sprite("wood"),
+        area(),
+        scale(2),
+        origin("bot"),
+        body(),
+        "wood"
+      ],
+      "-": () => [
+        sprite("inventory"),
+        scale(2),
+        origin("botleft"),
+        "inventory"
+      ],
+      ">": () => [
+        sprite("googoly"),
+        area(),
+        origin("bot"),
+        body(),
+        patrol(),
+        "enemy"
+      ],
+      "@": () => [
+        sprite("portal"),
+        area({ scale: 0.5 }),
+        origin("bot"),
+        pos(0, -12),
+        "portal"
+      ]
+    };
+    scene("game", ({ levelId, coins } = { levelId: 0, coins: 0 }) => {
+      gravity(3200);
+      const level = addLevel(LEVELS[levelId != null ? levelId : 0], levelConf);
+      const player = add([
+        sprite("bean"),
+        pos(0, 0),
+        area(),
+        scale(1),
+        body(),
+        big(),
+        origin("bot"),
+        "bean"
+      ]);
+      player.action(() => {
+        camPos(player.pos);
+        if (player.pos.y >= FALL_DEATH) {
+          go("lose");
+        }
+      });
+      player.collides("danger", () => {
+        go("lose");
+      });
+      player.collides("portal", () => {
+        if (hasWood) {
+          if (levelId + 1 < LEVELS.length) {
+            go("game", {
+              levelId: levelId + 1,
+              coins
+            });
+          } else {
+            go("win");
+          }
+        }
+      });
+      player.on("ground", (l) => {
+        if (l.is("enemy")) {
+          player.jump(JUMP_FORCE * 1.5);
+          destroy(l);
+          addKaboom(player.pos);
+        }
+      });
+      player.collides("enemy", (e, side) => {
+        if (side !== "bottom") {
+          go("lose");
+        }
+      });
+      let hasWood = false;
+      player.collides("wood", (a) => {
+        destroy(a);
+        hasWood = true;
+      });
+      player.collides("wood", (w) => {
+        destroy(w);
+        hasWood = true;
+      });
+      player.collides("wood", (i) => {
+        destroy(i);
+        add([
+          sprite("inventory"),
+          origin("topleft"),
+          area(),
+          fixed()
+        ]);
+      });
+      keyPress("space", () => {
+        if (player.grounded()) {
+          player.jump(JUMP_FORCE);
+        }
+      });
+      keyDown("left", () => {
+        player.move(-MOVE_SPEED, 0);
+      });
+      keyDown("right", () => {
+        player.move(MOVE_SPEED, 0);
+      });
+      keyPress("down", () => {
+        player.weight = 3;
+      });
+      keyRelease("down", () => {
+        player.weight = 1;
+      });
+      keyPress("f", () => {
+        fullscreen(!fullscreen());
+      });
+      keyPress("e", () => {
+        every("tree", (t) => {
+          if (player.isColliding(t)) {
+            if (t.is("tree") && !hasWood) {
+              const wood = level.spawn("#", t.gridPos.sub(0, 1));
+              wood.jump();
+              hasWood = true;
+            }
+          }
+        });
+      });
+    });
+    add([
+      sprite("inventory"),
+      origin("topleft")
+    ]);
+    scene("lose", () => {
+      add([
+        text("You Lose")
+      ]);
+      keyPress(() => go("game"));
+    });
+    scene("win", () => {
+      add([
+        text("You Win")
+      ]);
+      keyPress(() => go("game"));
+    });
+    go("game");
+  }
+  __name(runNalu, "runNalu");
 
   // code/main.js
   kaboom_default();
-  example();
+  runNalu();
 })();
 //# sourceMappingURL=game.js.map

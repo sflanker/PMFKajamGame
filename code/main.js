@@ -1,6 +1,6 @@
 import kaboom from "kaboom";
 import { example } from "./team-one"
-//import runNalu from "./Nalu"
+import runNalu from "./Nalu"
 import loadAssets from "./assets";
 
 // initialize context
@@ -12,9 +12,10 @@ kaboom();
 //   DONE(Nalu): Player Movement
 //   IN PROGRESS(Nalu): Resource gathering
 //   TODO(Nalu): Inventory (track resources, display)
+//   TODO: Terrain interactions (dig)
 //   TODO: Mob interactions (mele attacks, weapons?, jump attack)
 //   TODO: Track/display health
-//   TODO: Crafting (convert resources into items. overlay screen? what items?
+//   TODO: Crafting/Trading (convert resources into items. overlay screen? what items?
 //         needs specification)
 //   TODO: Items (equip item? display item being held? use item?)
 
@@ -22,7 +23,6 @@ kaboom();
 //   TODO(Paul): Level map loader
 //   TODO: Camera behavior (follow player?)
 //   TODO: Background effects (parallax?)
-//   TODO: Terrain interactions (dig)
 //   TODO: Foreground object capabilities (add sprite, specifiy size, location,
 //         define interaction behavior)
 //   TODO: Mobs: spawning, movement, response to player, deal damage to player
@@ -37,7 +37,7 @@ kaboom();
 //   TODO: define forground objects
 
 // team one code
-example();
+// example();
 
 // Nalu's code
-// runNalu();
+runNalu();
