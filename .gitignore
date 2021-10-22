@@ -1,0 +1,5 @@
+/dist
+.cache
+.config/configstore
+node_modules
+.upm
