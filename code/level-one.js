@@ -1,5 +1,5 @@
 import patrol from "./component-patrol";
-import initializePlayer from "./player"
+import initializePlayer from "./player";
 
 export default function initializeLevelOne() {
 

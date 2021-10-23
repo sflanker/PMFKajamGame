@@ -1,7 +1,10 @@
 import kaboom from "kaboom";
+import instance from "./kaboom-instance";
 import loadAssets from "./assets";
-import initializeLevelOne from "./level-one"
-import initializeLaa from "./Laa"
+import { trueType } from "./component-true-type"
+import initializeLevelOne from "./level-one";
+import initializeLaa from "./Laa";
+import initializeLevelTest from "./level-test";
 
 /******************************************************************************
  * 
@@ -46,13 +49,11 @@ import initializeLaa from "./Laa"
  * 
  *****************************************************************************/
 
-// initialize context
-kaboom();
-
 loadAssets();
 
 initializeLevelOne();
 initializeLaa();
+initializeLevelTest();
 
 scene("intro", () => {
   add([
@@ -63,7 +64,10 @@ scene("intro", () => {
     pos(width() / 2, height() / 2),
   ])
   let choice = add([
-    text("<- Laʻa's Test Scene\nLevel One ->"),
+    trueType(
+      "<- Laʻa's Test Scene\nLevel One ->\n⌵⌵ Paul's Test Scene ⌵⌵",
+      { font: "Hanalei Fill", size: 32 }
+    ),
     pos(width() / 2, height() / 2 - 40),
     origin("center"),
     scale(1)
@@ -80,6 +84,8 @@ scene("intro", () => {
   keyPress("left", () => go("laa"));
 
   keyPress("right", () => go("level-one"));
+
+  keyPress("down", () => go("test"));
 });
 
 scene("lose", () => {

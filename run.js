@@ -150,6 +150,7 @@ app.use("/sprites", express.static("sprites"));
 app.use("/sounds", express.static("sounds"));
 app.use("/code", express.static("code"));
 app.use("/dist", express.static("dist"));
+app.use("/fonts", express.static("fonts"));
 
 server.listen(port);
 

@@ -1,3 +1,5 @@
+// import { loadTrueType } from "./component-true-type"
+
 export default function loadAssets() {
 	loadSprite("bean", "sprites/bean.png");
   loadSprite("googoly", "sprites/googoly.png");
@@ -9,4 +11,6 @@ export default function loadAssets() {
   loadSprite("wood", "sprites/wood.png");
   loadSprite("box", "sprites/box.png");
   loadSprite("inventory", "sprites/inventory.png");
+
+  //loadTrueType("hanalei", "fonts/HanaleiFill.ttf");
 }
