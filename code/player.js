@@ -28,7 +28,8 @@ export default function initializePlayer(level, options) {
       body(),
       // the custom component we defined above
       origin("bot"),
-      "bean",
+      layer("player"),
+      "player",
     ]);
 
   const digArea = add
@@ -67,47 +68,43 @@ export default function initializePlayer(level, options) {
     }
   });
 
-  // inventory script
-  // TODO: track quantities of multiple kinds of resource
-  /*
-  let inventory = {};
-  
-  collides("resource", obj => {
-    if (inventory[obj.resourceType]) {
-      inventory[obj.resourceType] = [obj.resourceType] + 1;
-    } else {
-      inventory[obj.resourceType] = 1;
-    }
-  });
-  
-  add([
-    sprite("whatever"),
-    { resourceType: "wood" },
-    "resource"
-  ]) */
 
-  let woodCount = 0;
+  let resources = {};
+  let resourceDisplay = {};
 
-  player.collides("wood", (w) => {
+  player.collides("resource", (w) => {
+    let type = w.resourceType;
     destroy(w);
-    add
-      ([
-        sprite("wood"),
+
+    if (resources[type]) {
+      resources[type]++
+    } else {
+      resources[type] = 1;
+      let offset = 48 + Object.getOwnPropertyNames(resourceDisplay).length * 32;
+
+      let icon = add([
+        sprite(type),
+        pos(offset, 0),
+        scale(2),
+        layer("overlay"),
         origin("topleft"),
         area(),
         fixed(),
       ]);
-    woodCount += 1;
-    woodLabel.text = woodCount;
+      const label = add([
+        text("", { size: 32 }),
+        layer("overlay"),
+        pos(offset + 48, 0),
+        scale(1),
+        fixed(),
+      ]);
+
+      resourceDisplay[type] = { icon, label };
+    }
+
+    resourceDisplay[type].label.text = resources[type];
   });
 
-  const woodLabel = add
-    ([
-      text(""),
-      pos(1, 0),
-      scale(0.2),
-      fixed(),
-    ])
 
   // instead of using player.isColliding in an if block (which will only run once when the scene is created), use the player.collides event
   // the contents of your if block there { ... } should be the body of an arrow function that is the second argument to collides("tree", () => { ... }) 👍
@@ -116,6 +113,7 @@ export default function initializePlayer(level, options) {
     const hint = add
       ([
         text("E", { size: 48 }),
+        layer("overlay"),
         pos(0, 0),
         fixed(),
       ]);
@@ -177,7 +175,7 @@ export default function initializePlayer(level, options) {
     player.move(MOVE_SPEED, 0);
   }
 
-  keyDown("right",  moveRight);
+  keyDown("right", moveRight);
   keyDown("d", moveRight);
 
   function idle() {
@@ -214,33 +212,80 @@ export default function initializePlayer(level, options) {
     }
   })
 
-  let axeEquiped = false;
+  const YOffset = 48;
+  let selection = add([
+    outline(3),
+    rect(64, 64),
+    opacity(0.6),
+    pos(width() / 2, YOffset),
+    fixed(),
+    origin("center"),
+    layer("overlay")
+  ]);
+  selection.hidden = true;
+
+  let axeIcon = add([
+    sprite("Item-Hatchet"),
+    scale(2),
+    fixed(),
+    pos(width() / 2 - 32, YOffset),
+    origin("center"),
+    layer("overlay")
+  ]);
+
+  let shovelIcon = add([
+    sprite("Item-Stone_Shovel"),
+    scale(2),
+    fixed(),
+    pos(width() / 2 + 32, YOffset),
+    origin("center"),
+    layer("overlay")
+  ]);
+
+  let axeEquipped = false;
   let pickaxeEquipped = false;
-  let shovelEquiped = false;
+  let shovelEquipped = false;
+
+  function updateSelection() {
+    if (axeEquipped) {
+      selection.pos.x = width() / 2 - 32;
+      selection.hidden = false;
+    } else if (shovelEquipped) {
+      selection.pos.x = width() / 2 + 32;
+      selection.hidden = false;
+    } else {
+      selection.hidden = true;
+    }
+  }
 
   keyPress("1", () => {
-    axeEquiped = true;
+    axeEquipped = true;
     pickaxeEquipped = false;
-    shovelEquiped = false;
+    shovelEquipped = false;
+    updateSelection();
   });
   keyPress("2", () => {
-    axeEquiped = false;
+    axeEquipped = false;
     pickaxeEquipped = true;
-    shovelEquiped = false;
+    shovelEquipped = false;
+    updateSelection();
   });
   keyPress("3", () => {
-    axeEquiped = false;
+    axeEquipped = false;
     pickaxeEquipped = false;
-    shovelEquiped = true;
+    shovelEquipped = true;
+    updateSelection();
   });
 
   keyPress("e", () => {
     every("searchable", (s) => {
       if (player.isColliding(s)) {
         if (s.is("searchable")) {
-          if ("holdsWood" && axeEquiped) {
-            const wood = level.spawn("#", s.gridPos.sub(0, 5));
+          if (axeEquipped && s.compatibleTools.includes("axe")) {
+            // check resource type?
+            const wood = level.spawn("w", s.gridPos.sub(0, 5));
             wood.jump();
+            s.trigger("mined");
             destroy(s);
           }
         }
@@ -249,7 +294,7 @@ export default function initializePlayer(level, options) {
   });
 
   clicks("breakable", (b) => {
-    if (shovelEquiped) {
+    if (shovelEquipped) {
       destroy(b);
     }
   })

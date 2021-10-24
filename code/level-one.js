@@ -1,5 +1,6 @@
 import loadLevel from "./level-loader";
 import initializePlayer from "./player";
+import on from "./component-on";
 
 export default function initializeLevelOne() {
   const TileSize = 32;
@@ -25,7 +26,8 @@ export default function initializeLevelOne() {
         "background-scenery",
         "tiles",
         "foreground-scenery",
-        "player"
+        "player",
+        "overlay"
       ],
       "tiles"
     );
@@ -43,6 +45,18 @@ export default function initializeLevelOne() {
       (height() * 1.2) / background.height
     ));
 
+    let respawnSuppressions = {};
+    function preventRespawn(type, makeComps) {
+      return (p) => {
+        let key = `${type}-${p.x},${p.y}`;
+        if (!respawnSuppressions[key]) {
+          return makeComps(p, () => {
+            respawnSuppressions[key] = true;
+          });
+        }
+      }
+    }
+
     const level = await loadLevel(
       "sprites/Level-One-Map-v2.png",
       {
@@ -53,7 +67,16 @@ export default function initializeLevelOne() {
         "?": () => [
           sprite("Missing", TileSpriteOpts),
           origin("bot"),
-        ]
+        ],
+        "w": () => [
+          sprite("wood", { width: 32, height: 32 }),
+          area(),
+          scale(2),
+          origin("bot"),
+          body(),
+          { resourceType: "wood" },
+          "resource"
+        ],
       },
       {
         "#000000-=": () => [
@@ -107,6 +130,8 @@ export default function initializeLevelOne() {
           sprite("Tile-Water", TileSpriteOpts),
           origin("bot"),
           "water"
+          // TODO: enable swimming by lowering gravity and allowing jump when
+          // not grounded
         ],
         "#ff0000": () => [
           sprite("Tile-Lava", TileSpriteOpts),
@@ -125,19 +150,22 @@ export default function initializeLevelOne() {
         "#ffffff": () => [
           sprite("NPC-Goat", { width: 128, height: 128, anim: "idle" }),
           origin("bot"),
+          pos(0, 4),
           layer("foreground-scenery"),
           "goat"
           // TODO: bleat at random?
         ],
-        "#006400-|": () => [
+        "#006400-|": preventRespawn("tree", (_, prevent) => [
           sprite("Scenery-Palm-Tree-With-Crab"),
           origin("bot"),
+          pos(0, 16),
           scale(2),
           area(),
           layer("foreground-scenery"),
+          on("mined", prevent),
           "searchable",
-          { resourceType: "wood" },
-        ],
+          { resourceType: "wood", compatibleTools: ["axe"] },
+        ]),
         "#6e039d": () => [
           sprite("Scenery-Beach-Hale"),
           origin("bot"),

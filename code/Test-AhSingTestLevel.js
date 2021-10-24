@@ -83,7 +83,7 @@ export default function initializeAhSing() {
       "portal",
     ],
     "p": () =>  [
-      sprite("pele(inactive)", {width: 128, height: 128,anim:"run"}),
+      sprite("NPC-Pele", {width: 128, height: 128,anim:"idle"}),
        area(), 
        origin("bot"), 
        pos(0, 16), 
@@ -97,7 +97,7 @@ export default function initializeAhSing() {
     // add level to scene
     const level = addLevel(LEVEL, levelConf);
     every("pele",(p)=>{
-      p.play("run",{loop:true})
+      p.play("idle",{loop:true})
     })
     // define player object
     const player = add([

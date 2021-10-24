@@ -3,10 +3,10 @@ import instance from "./kaboom-instance";
 import loadAssets from "./assets";
 import { trueType } from "./component-true-type"
 import initializeLevelOne from "./level-one";
-import initializeNalu from "./Nalu";
-import initializeLaa from "./Laa";
-import initializeTeamThree from "./team-three";
-import initializeAhSing from "./AhSingTestLevel"
+import initializeNalu from "./Test-Nalu";
+import initializeLaa from "./Test-Laa";
+import initializeTeamThree from "./Test-team-three";
+import initializeAhSing from "./Test-AhSingTestLevel"
 
 /******************************************************************************
  * 
@@ -93,8 +93,8 @@ scene("intro", () => {
   });
 
   keyPress("2", () => {
-    gameScene = "laa";
-    go("laa")
+    gameScene = "nalu";
+    go("nalu")
   });
 
   keyPress("3", () => {
@@ -113,7 +113,7 @@ scene("intro", () => {
   });
 });
 
-let gameScene = "level-one";
+let gameScene = "intro";
 
 scene("lose", () => {
   add([
@@ -129,4 +129,4 @@ scene("win", () => {
   keyPress(() => go(gameScene));
 });
 
-go("level-one");
+go("intro");

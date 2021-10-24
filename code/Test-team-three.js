@@ -1,5 +1,5 @@
 import patrol from "./component-patrol";
-import initializePlayer from "./player";
+import initializePlayer from "./old-player";
 
 export default function initializeTeamThree() {
 
@@ -26,13 +26,13 @@ export default function initializeTeamThree() {
     height: 32,
     // define each object as a list of components
     "=": () => [
-      sprite("UnbreakableSand"),
+      sprite("Tile-Sand-Unbreakable"),
       area(),
       solid(),
       origin("bot"),
     ],
     "b": () => [
-      sprite("breakableSand"),
+      sprite("Tiles-Sand"),
       area(),
       solid(),
       origin("bot"),
