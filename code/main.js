@@ -69,33 +69,47 @@ scene("intro", () => {
   ])
 
   let choice = add([
-    text("^ Ah Sing Test ^\n<- Laʻa's Test Scene\nLevel One ->"),
+    trueType(
+      "1. Level One\n2. Laa's Code\n3. Team Three\n4. Team Ah Sing\n5. Paul's Loader Test",
+      { font: "Hanalei Fill", size: 64 }),
     pos(width() / 2, height() / 2 - 40),
     origin("center"),
     scale(1)
   ]);
-  choice.scaleTo((width() - 60) / choice.width);
+  choice.scaleTo(Math.min((width() - 80) / choice.width, (height() - 180) / choice.height));
   let prompt = add([
-    text("Press an arrow key to select"),
-    pos(width() / 2, height() / 2 + 80),
-    origin("center"),
+    trueType(
+      "Press a number key to select",
+      { font: "Hanalei Fill", size: 32 }),
+    pos(width() / 2, height() - 40),
+    origin("bot"),
     scale(1),
   ]);
-  prompt.scaleTo((width() - 60) / prompt.width);
+  prompt.scaleTo((width() - 80) / prompt.width);
 
-  keyPress("left", () => {
-    gameScene = "laa";
-    go("laa")
-  });
-
-  keyPress("right", () => {
+  keyPress("1", () => {
     gameScene = "level-one";
     go("level-one")
   });
 
-  keyPress("up", () => {
+  keyPress("2", () => {
+    gameScene = "laa";
+    go("laa")
+  });
+
+  keyPress("3", () => {
+    gameScene = "team-three";
+    go("team-three")
+  });
+
+  keyPress("4", () => {
     gameScene = "AhSing";
     go("AhSing");
+  });
+
+  keyPress("5", () => {
+    gameScene = "test";
+    go("test");
   });
 });
 
