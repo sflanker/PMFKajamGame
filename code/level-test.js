@@ -7,10 +7,11 @@ export default function initializeLevelTest() {
 
   scene('test', async () => {
     const level = await loadLevel(
-      'sprites/Kaena-Level-1-v1-small.png',
+      'sprites/Kaena-Level-1-v1.png',
       {
         width: TileSize,
         height: TileSize,
+        fast: true,
         // Missing color tile
         '?': () => [
           sprite('portal', TileSpriteOpts),
@@ -34,7 +35,7 @@ export default function initializeLevelTest() {
     );
 
     add([
-      text(debug.fps().toString()),
+      text(''),
       // pos(-width() / 2 + 10, -height() / 2 + 10),
       pos(0, 0),
       fixed(),
@@ -42,7 +43,7 @@ export default function initializeLevelTest() {
     ]);
 
     action("fps-display", obj => {
-      obj.text = debug.fps().toString();
+      obj.text = `${debug.fps()} (${debug.objCount()})`;
     });
 
     const player = initializePlayer(level);
