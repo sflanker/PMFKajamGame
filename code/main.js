@@ -18,8 +18,8 @@ import initializeAhSing from "./Test-AhSingTestLevel"
  * Player behavior
  *   DONE(Nalu): Player Movement
  *   IN PROGRESS(Nalu): Resource gathering
- *   TODO(Nalu): Inventory (track resources, display)
- *   TODO: Terrain interactions (dig)
+ *   Done(Nalu): Inventory (track resources, display)
+ *   IN PROGRESS(Nalu): Terrain interactions (dig)
  *   TODO: Mob interactions (mele attacks, weapons?, jump attack)
  *   TODO: Track/display health
  *   TODO: Crafting/Trading (convert resources into items. overlay screen? what items?

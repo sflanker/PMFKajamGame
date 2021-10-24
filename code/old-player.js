@@ -7,7 +7,6 @@ export default function initializePlayer(level) {
   const MOVE_SPEED = 480;
   const FALL_DEATH = 2400;
 
-
   // define player object
   const player = add
   ([

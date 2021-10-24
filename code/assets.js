@@ -8,6 +8,8 @@ export default function loadAssets() {
   loadSprite("coin", "sprites/coin.png");
   loadSprite("tree", "sprites/Tree.png");
   loadSprite("wood", "sprites/wood.png");
+  loadSprite("stone", "sprites/Stone-1.png.png");
+  loadSprite("seashell", "sprites/seashell.png");
 
   // Tiles
   loadSprite("Tile-Bedrock", "sprites/Tile-Bedrock.png");
@@ -26,10 +28,12 @@ export default function loadAssets() {
   // Scenery
   loadSprite("Scenery-Beach-Hale", "sprites/Scenery-Beach-Hale.png");
   loadSprite("Scenery-Palm-Tree-With-Crab", "sprites/Scenery-Palm-Tree-With-Crab.png");
+  loadSprite("rock-formation-1", "sprites/rock-formation-1.png.png");
 
   // Items
   loadSprite("Item-Hatchet", "sprites/Item-Hatchet.png");
   loadSprite("Item-Stone_Shovel", "sprites/Item-Stone_Shovel.png");
+  loadSprite("Item-Pickaxe", "sprites/pickaxe-1.png.png");
 
   // NPCs
   loadSprite(

@@ -71,10 +71,12 @@ export default function initializePlayer(level, options) {
 
   let resources = {};
   let resourceDisplay = {};
+  let woodCount = 0;
 
   player.collides("resource", (w) => {
     let type = w.resourceType;
     destroy(w);
+    woodCount += 1;
 
     if (resources[type]) {
       resources[type]++
@@ -147,6 +149,7 @@ export default function initializePlayer(level, options) {
   });
 
   let movement = "idle";
+
   function moveLeft() {
     if (movement !== "left") {
       if (player.grounded()) {
@@ -264,18 +267,20 @@ export default function initializePlayer(level, options) {
     shovelEquipped = false;
     updateSelection();
   });
-  keyPress("2", () => {
+  keyPress("3", () => {
     axeEquipped = false;
     pickaxeEquipped = true;
     shovelEquipped = false;
     updateSelection();
   });
-  keyPress("3", () => {
+  keyPress("2", () => {
     axeEquipped = false;
     pickaxeEquipped = false;
     shovelEquipped = true;
     updateSelection();
   });
+
+  let hasSpokenTo = false;
 
   keyPress("e", () => {
     every("searchable", (s) => {
@@ -292,7 +297,32 @@ export default function initializePlayer(level, options) {
         }
       }
     })
+    every("NPC", (n) => {
+      if (player.isColliding(n)) {
+        if (n.is("NPC")) {
+          if (!hasSpokenTo) {
+            quest.text = "Travel across this HUGE land and deliver 7 wood to Pele";
+          }
+        }
+      }
+    })
+    every("Pele", (p) => {
+      if (player.isColliding(p)) {
+        if (p.is("Pele")) {
+          if (woodCount >= 1) {
+            go("win");
+          }
+        }
+      }
+    })
   });
+
+  const quest = add([
+    text("", { size: 32 }),
+    pos(40, height() - 850),
+    fixed(),
+    z(2),
+  ])
 
   clicks("breakable", (b) => {
     if (shovelEquipped) {
