@@ -1,4 +1,4 @@
- export default function initializeLaa() {
+export default function initializeLaa() {
 
   // define some constants
   const JUMP_FORCE = 1320;

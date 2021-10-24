@@ -73,7 +73,7 @@ export default function initializeLevelOne() {
       pos(0, -12),
       "portal",
     ],
-  }
+  };
 
   scene("level-one", () => {
     gravity(3200);
