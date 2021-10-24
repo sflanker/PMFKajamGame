@@ -109,6 +109,7 @@ export default function loadAssets() {
   loadSound("Soothing_and_Fading(IGT)", "sounds/Soothing_and_Fading(IGT).mp3");
   loadSound("Sparked(IGT)", "sounds/Sparked(IGT).mp3");
   loadSound("Venture(IGT)", "sounds/Venture(IGT).mp3");
-  loadSound("Pick_Up(Purplemaia_Kajam SFX)", "sounds/Pick_Up(Purplemaia_Kajam SFX).mp3");
   loadSound("Jump(Purplemaia_Kajam_SFX)", "sounds/Jump(Purplemaia_Kajam_SFX).mp3");
-}
+  loadSound("Axe(Purplemaia_Kajam_SFX)", "sounds/Axe(Purplemaia_Kajam_SFX).mp3");
+  loadSound("Shoveling(Purplemaia_Kajam_SFX)", "sounds/Shoveling(Purplemaia_Kajam_SFX).mp3");
+  }

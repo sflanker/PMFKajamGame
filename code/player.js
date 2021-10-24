@@ -287,6 +287,7 @@ export default function initializePlayer(level, options) {
             wood.jump();
             s.trigger("mined");
             destroy(s);
+            play("Axe(Purplemaia_Kajam_SFX)");
           }
         }
       }
@@ -296,6 +297,7 @@ export default function initializePlayer(level, options) {
   clicks("breakable", (b) => {
     if (shovelEquipped) {
       destroy(b);
+      play("Shoveling(Purplemaia_Kajam_SFX)");
     }
   })
 
