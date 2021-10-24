@@ -1,8 +1,8 @@
-// Why is there no GameObj export?
-import type { Level, LevelConf, Vec2, Character } from 'kaboom';
-import instance from "./kaboom-instance";
+import type { Character, CompList, Level, LevelConf, Vec2 } from 'kaboom';
+import instance from './kaboom-instance';
+import { QuadTree, Rect, makeQuadTree } from './lib-quad-tree';
 
-const { add2, grid, pos, vec, addLevel } = instance;
+const { add, pos, vec2, addLevel } = instance;
 
 const MaxColorSqDist = 48;
 
@@ -19,7 +19,7 @@ type ColorInfo = {
 // Helper function to create a level
 export default async function loadLevel(
   terrainPath: string,
-  options: LevelConf,
+  options: LevelConf & { fast?: boolean },
   colorMap: ColorMap) : Promise<LevelWithData> {
 
   let terrainImage = await loadImage(terrainPath);
@@ -101,8 +101,10 @@ export default async function loadLevel(
     console.warn(`Color ${c} found in level map with no matching tile definition. Closest match: ${missing[c]}`)
   }
 
-  let level : LevelWithData = addLevel(levelData, { ...options, ...tileFactories });
-    // new FastLevel(levelData, { ...options, ...tileFactories });
+  let level : LevelWithData =
+    options.fast ?
+      new FastLevel(levelData, { ...options, ...tileFactories }) :
+      addLevel(levelData, { ...options, ...tileFactories });
   level.data = levelData;
   return level;
 }
@@ -166,6 +168,8 @@ class ImageData {
   }
 }
 
+const LeafQuadSize = 8;
+
 class FastLevel implements Level {
   private _offset: Vec2;
 
@@ -173,6 +177,11 @@ class FastLevel implements Level {
   private _cols: number;
 
   private _objects: Character[] = [];
+  private _map: QuadTree<string>;
+
+  private _loadedQuads: { [key: string]: QuadTree<Character> } = {};
+
+  private _dispose: () => void;
 
 	width = () => this.options.width * this._cols;
 	height = () => this.options.height * this._rows;
@@ -181,10 +190,21 @@ class FastLevel implements Level {
 	gridWidth = () => this.options.width;
 	gridHeight = () => this.options.height;
   
-  constructor(private map: string[], private options: LevelConf) {
+  constructor(map: string[], private options: LevelConf) {
     this._rows = map.length;
     this._cols = map.map(r => r.length).reduce((max, v) => v > max ? v : max);
     this._offset = vec2(options.pos ?? vec2(0, 0));
+
+    this._map = makeQuadTree(map.map(row => row.split('')), LeafQuadSize);
+
+    let lastCamPos = undefined;
+    let gridSize = Math.min(this.options.width, this.options.height);
+    this._dispose = action(() => {
+      let curCamPos = (<() => Vec2> camPos)();
+      if (!lastCamPos || curCamPos.dist(lastCamPos) > 2 * gridSize) {
+        lastCamPos = curCamPos;
+      }
+    });
   }
 
   getPos(posOrX: Vec2 | number, y?: number): Vec2 {
@@ -201,6 +221,11 @@ class FastLevel implements Level {
     }
   }
 
+  // TODO: does there need to be a way to clean up things spawned into the level
+  // this way?
+  // What happens when everything arround them gets despawned?
+  // Thought: find the loaded quad this would belong to, when that is unloaded
+  // trigger a "quadUnloaded" event on the Character
 	spawn(sym: string, posOrX: Vec2 | number, y?: number): Character {
     let p: Vec2;
     if (typeof posOrX === 'number') {
@@ -209,19 +234,21 @@ class FastLevel implements Level {
       p = posOrX;
     }
 
-    return this.spawnInto(this._objects, sym, p);
+    let c = this.spawnImpl(sym, p);
+    this._objects.push(c);
+    return c;
   }
 
-  private spawnInto(list: Character[], sym: string, p: Vec2) {
+  private spawnImpl(sym: string, p: Vec2) {
     const comps = (() => {
       if (this.options[sym]) {
-        if (typeof this.options[sym] !== "function") {
-          throw new Error("level symbol def must be a function returning a component list");
+        if (typeof this.options[sym] !== 'function') {
+          throw new Error('level symbol def must be a function returning a component list');
         }
         return this.options[sym](p);
       } else if (this.options.any) {
-        // Kaboom's type exports a bunk
-        return (<any >this.options.any)(sym, p);
+        // Kaboom's type exports a bunk (or this overload hasn't been released yet)
+        return (<(sym: string, p: Vec2) => CompList<any>> this.options.any)(sym, p);
       }
     })();
 
@@ -236,7 +263,7 @@ class FastLevel implements Level {
 
     for (const comp of comps) {
       // offset by existing pos component
-      if (comp.id === "pos") {
+      if (comp.id === 'pos') {
         worldPos.x += comp.pos.x;
         worldPos.y += comp.pos.y;
         break;
@@ -244,16 +271,47 @@ class FastLevel implements Level {
     }
 
     comps.push(pos(worldPos));
-    comps.push(grid(this, pos));
+    comps.push(grid(this, p));
 
-    const obj = add(comps);
-
-    list.push(obj);
-
-    return obj;
+    return add(comps);
   }
   
 	destroy() {
-
+    this._objects.forEach(destroy);
+    this._dispose();
   }
+}
+
+// TODO: handle when things are moved from one quad to another with the grid
+// component functions
+function grid(level: Level, p: Vec2) {
+	return {
+		id: "grid",
+		gridPos: p.clone(),
+
+		setGridPos(posOrX: Vec2 | number, y?: number) {
+			this.gridPos = typeof posOrX === 'number' ? vec2(posOrX, y) : posOrX.clone();
+			this.pos = vec2(
+				level.offset().x + this.gridPos.x * level.gridWidth(),
+				level.offset().y + this.gridPos.y * level.gridHeight()
+			);
+		},
+
+		moveLeft() {
+			this.setGridPos(this.gridPos.add(vec2(-1, 0)));
+		},
+
+		moveRight() {
+			this.setGridPos(this.gridPos.add(vec2(1, 0)));
+		},
+
+		moveUp() {
+			this.setGridPos(this.gridPos.add(vec2(0, -1)));
+		},
+
+		moveDown() {
+			this.setGridPos(this.gridPos.add(vec2(0, 1)));
+		},
+
+	};
 }
