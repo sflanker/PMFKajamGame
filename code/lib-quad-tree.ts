@@ -23,7 +23,7 @@ export function makeQuadTree<T>(items: T[][], leafSize: number = 16): QuadTree<T
         Math.ceil(Math.log2(w / leafSize)),
         Math.ceil(Math.log2(h / leafSize))
       );
-      let subSize = leafSize * ((levels - 1) ** 2);
+      let subSize = leafSize * (2 ** (levels - 1));
       let rows = Math.ceil(w / subSize);
       let cols = Math.ceil(h / subSize);
       let subs: QuadTree<T>[][] = [];
@@ -47,8 +47,8 @@ export function makeQuadTree<T>(items: T[][], leafSize: number = 16): QuadTree<T
   return helper({
     top: 0,
     left: 0,
-    bottom: items.length + 1,
-    right: items.map(r => r.length).reduce((max, v) => v > max ? v : max)
+    bottom: items.length - 1,
+    right: items.map(r => r.length).reduce((max, v) => v > max ? v : max) - 1
   });
 }
 
@@ -102,9 +102,12 @@ class QuadTreeLeaf<T> extends QuadTree<T> {
     let newItems = [];
     for (let r = this.bounds.top; r <= this.bounds.bottom; r++) {
       newItems[r - this.bounds.top] = [];
-      for (let c = this.bounds.left; c <= this.bounds.right; c++) {
-        newItems[r - this.bounds.top][c - this.bounds.left] =
-         fn(this.items[r - this.itemsTop][c - this.itemsLeft], c, r);
+      if (this.items[r - this.itemsTop]) {
+        let rowLen = this.items[r - this.itemsTop].length;
+        for (let c = this.bounds.left; c <= this.bounds.right && c - this.itemsLeft < rowLen; c++) {
+          newItems[r - this.bounds.top][c - this.bounds.left] =
+          fn(this.items[r - this.itemsTop][c - this.itemsLeft], c, r);
+        }
       }
     }
 
@@ -113,8 +116,11 @@ class QuadTreeLeaf<T> extends QuadTree<T> {
 
   mapInto<U>(newItems: U[][], fn: MapFn<T, U>): QuadTree<U> {
     for (let r = this.bounds.top; r <= this.bounds.bottom; r++) {
-      for (let c = this.bounds.left; c <= this.bounds.right; c++) {
-        newItems[r][c] = fn(this.items[r - this.itemsTop][c - this.itemsLeft], c, r);
+      if (this.items[r - this.itemsTop]) {
+        let rowLen = this.items[r - this.itemsTop].length;
+        for (let c = this.bounds.left; c <= this.bounds.right && c - this.itemsLeft < rowLen; c++) {
+          newItems[r][c] = fn(this.items[r - this.itemsTop][c - this.itemsLeft], c, r);
+        }
       }
     }
 
@@ -128,8 +134,11 @@ class QuadTreeLeaf<T> extends QuadTree<T> {
     let right = Math.min(bounds.right, this.bounds.right);
 
     for (let r = top; r <= bottom; r++) {
-      for (let c = left; c <= right; c++) {
-        fn(this.items[r - this.itemsTop][c - this.itemsLeft], c, r);
+      if (this.items[r - this.itemsTop]) {
+        let rowLen = this.items[r - this.itemsTop].length;
+        for (let c = left; c <= right && c - this.itemsLeft < rowLen; c++) {
+          fn(this.items[r - this.itemsTop][c - this.itemsLeft], c, r);
+        }
       }
     }
   }
@@ -175,7 +184,7 @@ class QuadTreeNode<T> extends QuadTree<T> {
     if (this.isOverlapping(bounds)) {
       for (let r = 0; r < this.quads.length; r++) {
         let rows = [];
-        for (let c = 0; c < this.quads.length; c++) {
+        for (let c = 0; c < this.quads[r].length; c++) {
           let overlapping = this.quads[r][c].getAllQuads(bounds);
           for (let sr = 0; sr < overlapping.length; sr++) {
             if (rows[sr]) {

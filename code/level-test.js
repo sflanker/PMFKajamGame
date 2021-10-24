@@ -11,6 +11,7 @@ export default function initializeLevelTest() {
       {
         width: TileSize,
         height: TileSize,
+        fast: true,
         // Missing color tile
         '?': () => [
           sprite('portal', TileSpriteOpts),

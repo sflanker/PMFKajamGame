@@ -213,7 +213,7 @@ class FastLevel implements Level {
         };
 
         let toLoad = this._map.getAllQuads(loadArea);
-        let toLoadKeys: { [key: string]: boolean };
+        let toLoadKeys: { [key: string]: boolean } = {};
 
         for (let quadRow of toLoad) {
           for (let quad of quadRow) {
