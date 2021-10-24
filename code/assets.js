@@ -9,6 +9,9 @@ export default function loadAssets() {
   loadSprite("tree", "sprites/Tree.png");
   loadSprite("wood", "sprites/wood.png");
 
+  // Welcome Page
+  loadSprite("To-The-Top", "sprites/To-The-Top.png");
+
   // Tiles
   loadSprite("Tile-Bedrock", "sprites/Tile-Bedrock.png");
   loadSprite("Tile-Dirt", "sprites/Tile-Dirt.png");
