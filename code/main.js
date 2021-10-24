@@ -5,7 +5,6 @@ import { trueType } from "./component-true-type"
 import initializeLevelOne from "./level-one";
 import initializeNalu from "./Nalu";
 import initializeLaa from "./Laa";
-import initializeLevelTest from "./level-test";
 import initializeTeamThree from "./team-three";
 import initializeAhSing from "./AhSingTestLevel"
 
@@ -55,8 +54,8 @@ import initializeAhSing from "./AhSingTestLevel"
 loadAssets();
 
 initializeLevelOne();
+initializeNalu();
 initializeLaa();
-initializeLevelTest();
 initializeTeamThree();
 initializeAhSing();
 
@@ -71,7 +70,7 @@ scene("intro", () => {
 
   let choice = add([
     trueType(
-      "1. Level One\n2. Laa's Code\n3. Team Three\n4. Team Ah Sing\n5. Paul's Loader Test",
+      "1. Level One\n2. Nalu's Code\n3. Laa's Code\n4. Team Three\n5. Team Ah Sing",
       { font: "Hanalei Fill", size: 64 }),
     pos(width() / 2, height() / 2 - 40),
     origin("center"),
@@ -99,22 +98,22 @@ scene("intro", () => {
   });
 
   keyPress("3", () => {
+    gameScene = "laa";
+    go("laa")
+  });
+
+  keyPress("4", () => {
     gameScene = "team-three";
     go("team-three")
   });
 
-  keyPress("4", () => {
+  keyPress("5", () => {
     gameScene = "AhSing";
     go("AhSing");
   });
-
-  keyPress("5", () => {
-    gameScene = "test";
-    go("test");
-  });
 });
 
-let gameScene;
+let gameScene = "level-one";
 
 scene("lose", () => {
   add([
@@ -130,4 +129,4 @@ scene("win", () => {
   keyPress(() => go(gameScene));
 });
 
-go("intro");
+go("level-one");

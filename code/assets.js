@@ -55,8 +55,8 @@ export default function loadAssets() {
     "NPC-Goat",
     "sprites/NPC-Goat.png",
     {
-      sliceX: 3,
-      sliceY: 2,
+      sliceX: 2,
+      sliceY: 3,
       anims: {
         bleat: {
           from: 0,

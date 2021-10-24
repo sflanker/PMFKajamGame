@@ -199,7 +199,6 @@ class FastLevel implements Level {
 
     let lastCamPos = undefined;
     let gridSize = Math.min(this.options.width, this.options.height);
-    let i = 0;
     this._dispose = action(() => {
       let curCamPos = (<() => Vec2> camPos)();
       if (!lastCamPos || curCamPos.dist(lastCamPos) > 2 * gridSize) {
@@ -209,7 +208,7 @@ class FastLevel implements Level {
         let loadArea = {
           top: topLeft.y / options.height - LeafQuadSize,
           left: topLeft.x / options.width - LeafQuadSize,
-          bottom: bottomRight.y / options.height + LeafQuadSize,
+          bottom: bottomRight.y / options.height + LeafQuadSize * 2,
           right: bottomRight.x / options.width + LeafQuadSize
         };
 
