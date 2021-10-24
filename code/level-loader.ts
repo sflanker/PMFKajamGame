@@ -66,7 +66,7 @@ export default async function loadLevel(
 
   for (let y = 0; y < terrainImage.height; y++) {
     let row : string[] = [];
-    for (let x = 0; x < (100 || terrainImage.width); x++) {
+    for (let x = 0; x < terrainImage.width; x++) {
       let [r,g,b,a] = terrainImage.get(x, y);
       // Ignore transparent pixels
       if (a === 255) {
@@ -199,6 +199,7 @@ class FastLevel implements Level {
 
     let lastCamPos = undefined;
     let gridSize = Math.min(this.options.width, this.options.height);
+    let i = 0;
     this._dispose = action(() => {
       let curCamPos = (<() => Vec2> camPos)();
       if (!lastCamPos || curCamPos.dist(lastCamPos) > 2 * gridSize) {
@@ -221,7 +222,6 @@ class FastLevel implements Level {
             toLoadKeys[key] = true;
 
             if (!this._loadedQuads[key]) {
-              debug.log(`load ${key}`);
               this._loadedQuads[key] =
                 quad.map((sym, x, y) => this.spawn(sym, x, y))
             }
@@ -231,7 +231,6 @@ class FastLevel implements Level {
         for (let existing of Object.getOwnPropertyNames(this._loadedQuads)) {
           if (!toLoadKeys[existing]) {
             // Unload
-            debug.log(`unload ${existing}`);
             this._loadedQuads[existing].iterateAll(obj => obj && destroy(obj));
             delete this._loadedQuads[existing];
           }
