@@ -5,19 +5,20 @@ export default function initializeLaa() {
   const MOVE_SPEED = 480;
   const FALL_DEATH = 2400;
 
+
   const LEVEL = [
-      "                          $",
-      "                          $",
-      "                          $",
-      "                          $",
-      "                          $",
-      "                          $",
-      "         ====             $",
-      "                          $",
-      "                          $",
-      "     ^         = >        @",
-      "===========================",
-    ];
+    "                          $",
+    "                          $",
+    "                          $",
+    "                          $",
+    "                          $",
+    "                      =   $",
+    "=        ====         =   $",
+    "=                     =   $",
+    "=                     =   $",
+    "=    ^         = >    =   @",
+    "===========================",
+  ];
 
   // define what each symbol means in the level graph
   const levelConf = {
@@ -56,7 +57,7 @@ export default function initializeLaa() {
       sprite("tree"),
       scale(10),
       area(),
-      pos(0, -50),
+      pos(0, 50),
       origin("bot"),
       "tree",
     ],
@@ -87,13 +88,28 @@ export default function initializeLaa() {
   scene("laa", () => {
     gravity(3200);
 
+    debug.log('play music')
+    const music = play("Venture(IGT)", {
+      volume: 0.8,
+      loop: true
+    });
+
+    let sceneCleanup = add([
+      "scene-cleanup"
+    ]);
+
+    sceneCleanup.on("destroy", () => {
+      debug.log('Scene laa destroyed');
+      music.stop();
+    });
+    
     // add level to scene
     const level = addLevel(LEVEL, levelConf);
 
     // define player object
     const player = add([
       sprite("bean"),
-      pos(0, 0),
+      pos(128, 0),
       area(),
       scale(1),
       // makes it fall to gravity and jumpable
@@ -122,6 +138,7 @@ export default function initializeLaa() {
 
     // jump with space
     keyPress("space", () => {
+      play("Jump(Purplemaia_Kajam_SFX)");
       // these 2 functions are provided by body() component
       if (player.grounded()) {
         player.jump(JUMP_FORCE);
