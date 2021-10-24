@@ -3,8 +3,8 @@ import big from "./component-big";
 // This initializes player related game objects
 export default function initializePlayer(level, options) {
   // define some constants
-  const JUMP_FORCE = 620;
-  const MOVE_SPEED = 480;
+  const JUMP_FORCE = 600;
+  const MOVE_SPEED = 400;
   const FALL_DEATH = 2400;
 
   if (!options) {
@@ -42,7 +42,7 @@ export default function initializePlayer(level, options) {
   // action() runs every frame
   player.action(() => {
     // center camera to player
-    camPos(vec2(player.pos.x, player.pos.y - 4 * options.tileSize));
+    camPos(vec2(player.pos.x, player.pos.y - 3 * options.tileSize));
     // check fall death
     if (player.pos.y >= FALL_DEATH) {
       go("lose");

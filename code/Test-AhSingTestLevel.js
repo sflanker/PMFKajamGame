@@ -1,7 +1,7 @@
 export default function initializeAhSing() {
 
   // define some constants
-  const JUMP_FORCE = 1320;
+  const JUMP_FORCE = 1500;
   const MOVE_SPEED = 400;
   const FALL_DEATH = 2400;
 

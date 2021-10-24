@@ -58,7 +58,7 @@ export default function initializeLevelOne() {
     }
 
     const level = await loadLevel(
-      "sprites/Level-One-Map-v2.png",
+      "sprites/Level-One-Map-v3.png",
       {
         width: TileSize,
         height: TileSize,
