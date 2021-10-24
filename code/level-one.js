@@ -7,6 +7,7 @@ export default function initializeLevelOne() {
   const TileSpriteOpts = { width: TileSize, height: TileSize };
 
   scene("level-one", async () => {
+
     const music = play("Venture(IGT)", {
       volume: 0.8,
       loop: true
@@ -144,15 +145,17 @@ export default function initializeLevelOne() {
           origin("bot"),
           area(),
           layer("foreground-scenery"),
-          "pele"
+          "Pele"
           // TODO: add behavior (use o'o, throw lava in random trajectories)
         ],
         "#ffffff": () => [
           sprite("NPC-Goat", { width: 128, height: 128, anim: "idle" }),
+          area(),
           origin("bot"),
           pos(0, 4),
           layer("foreground-scenery"),
-          "goat"
+          "goat",
+          "NPC",
           // TODO: bleat at random?
         ],
         "#006400-|": preventRespawn("tree", (_, prevent) => [
