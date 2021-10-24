@@ -60,6 +60,20 @@ initializeTeamThree();
 initializeAhSing();
 
 scene("intro", () => {
+  debug.log('play music')
+    const music = play("Soothing_and_Fading(IGT)", {
+      volume: 0.5,
+      loop: true
+    });
+    
+    let sceneCleanup = add([
+      "scene-cleanup"
+    ]);
+
+    sceneCleanup.on("destroy", () => {
+      music.stop();
+    });
+  
   add([
     rect(width() - 40, height() - 40),
     color(150, 150, 150),

@@ -8,7 +8,7 @@ export default function initializeLevelOne() {
 
   scene("level-one", async () => {
     const music = play("Venture(IGT)", {
-      volume: 0.8,
+      volume: 0.5,
       loop: true
     });
 
