@@ -8,9 +8,10 @@ export default function initializePlayer(level) {
   const FALL_DEATH = 2400;
 
   // define player object
-  const player = add([
+  const player = add
+  ([
     sprite("bean", { width: 32, height: 32 }),
-    pos(100, 20),
+    pos(120, 40),
     area(),
     scale(1),
     // makes it fall to gravity and jumpable
@@ -20,37 +21,45 @@ export default function initializePlayer(level) {
     "bean",
   ]);
 
-  const digArea = add([
+  const digArea = add
+  ([
     area(100, 100),
     pos(225, 135),
     fixed(),
   ])
 
   // action() runs every frame
-  player.action(() => {
+  player.action(() => 
+  {
     // center camera to player
     camPos(player.pos);
     // check fall death
-    if (player.pos.y >= FALL_DEATH) {
+    if (player.pos.y >= FALL_DEATH) 
+    {
       go("lose");
     }
   });
 
   // if player collides with any obj with "danger" tag, lose
-  player.collides("danger", () => {
+  player.collides("danger", () => 
+  {
     go("lose");
   });
 
-  player.on("ground", (l) => {
-    if (l.is("enemy")) {
+  player.on("ground", (l) => 
+  {
+    if (l.is("enemy")) 
+    {
       player.jump(JUMP_FORCE * 1.5);
       destroy(l);
       addKaboom(player.pos);
     }
   });
 
-  player.collides("enemy", (e, side) => {
-    if (side !== "bottom") {
+  player.collides("enemy", (e, side) => 
+  {
+    if (side !== "bottom") 
+    {
       go("lose");
     }
   });
@@ -75,10 +84,12 @@ export default function initializePlayer(level) {
   ]) */
 
   let woodCount = 0;
-
-  player.collides("wood", (w) => {
+  
+  player.collides("wood", (w) => 
+  {
     destroy(w);
-    add([
+    add
+    ([
       sprite("wood"),
       origin("topleft"),
       area(),
@@ -88,7 +99,8 @@ export default function initializePlayer(level) {
     woodLabel.text = woodCount;
   });
 
-  const woodLabel = add([
+  const woodLabel = add
+  ([
     text(""),
     pos(1, 0),
     scale(0.2),
@@ -100,7 +112,8 @@ export default function initializePlayer(level) {
   player.collides("searchable", () =>
   {
     //debug.log("show hint");
-    const hint = add([
+    const hint = add
+    ([
       text("E", { size: 48 }),
       pos(0, 0),
       fixed(),
@@ -108,7 +121,8 @@ export default function initializePlayer(level) {
     
     const searchable = get("searchable")[0];
     // All event handler functions return another function that disables the event when it is called
-    const stopAction = player.action(() => {
+    const stopAction = player.action(() => 
+    {
       // this is where you want an if () { ... } statement
       // checking if (!player.isColliding(tree) || hasWood)
       // isColliding might require an actual object instead of a tree, let me check... it works! could use an || there, depending on what behavior you want
@@ -125,26 +139,32 @@ export default function initializePlayer(level) {
   })
 
   // jump with space
-  keyPress("space", () => {
+  keyPress("space", () => 
+  {
     // these 2 functions are provided by body() component
-    if (player.grounded()) {
+    if (player.grounded()) 
+    {
       player.jump(JUMP_FORCE);
     }
   });
 
-  keyDown("left", () => {
+  keyDown("left" || "a", () => 
+  {
     player.move(-MOVE_SPEED, 0);
   });
 
-  keyDown("right", () => {
+  keyDown("right" || "d", () => 
+  {
     player.move(MOVE_SPEED, 0);
   });
 
-  keyPress("down", () => {
+  keyPress("down" || "s", () => 
+  {
     player.weight = 3;
   });
 
-  keyRelease("down", () => {
+  keyRelease("down" || "s", () => 
+  {
     player.weight = 1;
   });
 
@@ -152,17 +172,20 @@ export default function initializePlayer(level) {
   let pickaxeEquipped = false;
   let shovelEquiped = false;
 
-  keyPress("1", () => {
+  keyPress("1", () => 
+  {
     axeEquiped = true;
     pickaxeEquipped = false;
     shovelEquiped = false;
   });
-  keyPress("2", () => {
+  keyPress("2", () => 
+  {
     axeEquiped = false;
     pickaxeEquipped = true;
     shovelEquiped = false;
   });
-  keyPress("3", () => {
+  keyPress("3", () => 
+  {
     axeEquiped = false;
     pickaxeEquipped = false;
     shovelEquiped = true;
@@ -188,13 +211,33 @@ export default function initializePlayer(level) {
 
  clicks("breakable", (b) => 
  {
-    destroy(b);
+   if(shovelEquiped)
+   {
+     destroy(b);
+   }
  })
 
- hovers("breakable", (h) => 
- {
-   cursor("apple");
- })
+  mouseMove((p) => 
+  {
+    let isHovering = false;
+    every ("breakable", (b) => 
+    {
+      // false && true -> false
+      // true && true -> true
+      // false || true -> true
+      // false || false -> false
+      // instance function on AreaComp:  isHovering() => boolean
+      isHovering = isHovering || b.isHovering()
+    })
+    if (isHovering)
+    {
+      cursor("pointer");
+    }
+    else 
+    {
+      cursor("default");
+    }
+  })
 
   return player;
 }

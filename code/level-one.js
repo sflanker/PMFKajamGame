@@ -17,28 +17,30 @@ export default function initializeLevelOne() {
       "===========================",
   ];
 
-
-
   // define what each symbol means in the level graph
-  const levelConf = {
+  const levelConf = 
+  {
     // grid size
     width: 32,
     height: 32,
     // define each object as a list of components
-    "=": () => [
+    "=": () => 
+    [
       sprite("UnbreakableSand"),
       area(),
       solid(),
       origin("bot"),
     ],
-    "b": () => [
+    "b": () => 
+    [
       sprite("breakableSand"),
       area(),
       solid(),
       origin("bot"),
       "breakable",
     ],
-    "^": () => [
+    "^": () => 
+    [
       sprite("tree", { width: 32, height: 32 }),
       scale(10),
       area({ scale: 0.2 }),
@@ -46,7 +48,8 @@ export default function initializeLevelOne() {
       "searchable",
       "holdsWood",
     ],
-    "#": () => [
+    "#": () => 
+    [
       sprite("wood", { width: 32, height: 32 }),
       area(),
       scale(2),
@@ -54,13 +57,15 @@ export default function initializeLevelOne() {
       body(),
       "wood",
     ],
-    "-": () => [
+    "-": () => 
+    [
       sprite("inventory", { width: 32, height: 32 }),
       scale(2),
       origin("botleft"),
       "inventory",
     ],
-    ">": () => [
+    ">": () => 
+    [
       sprite("googoly", { width: 32, height: 32 }),
       area(),
       origin("bot"),
@@ -68,7 +73,8 @@ export default function initializeLevelOne() {
       patrol(),
       "enemy",
     ],
-    "@": () => [
+    "@": () => 
+    [
       sprite("portal", { width: 32, height: 32 }),
       area({ scale: 0.5, }),
       origin("bot"),
@@ -77,7 +83,8 @@ export default function initializeLevelOne() {
     ],
   };
 
-  scene("level-one", () => {
+  scene("level-one", () => 
+  {
     gravity(3200);
 
     // add level to scene
@@ -85,8 +92,9 @@ export default function initializeLevelOne() {
 
     const player = initializePlayer(level);
 
-    player.collides("portal", () => {
-        go("win");
+    player.collides("portal", () => 
+    {
+      go("win");
     });
   });
 }
