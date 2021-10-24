@@ -24,4 +24,18 @@ export default function loadAssets() {
   loadSound("Venture(IGT)", "sounds/Venture(IGT).mp3");
   loadSound("Pick_Up(Purplemaia_Kajam SFX)", "sounds/Pick_Up(Purplemaia_Kajam SFX).mp3");
   loadSound("Jump(Purplemaia_Kajam_SFX)", "sounds/Jump(Purplemaia_Kajam_SFX).mp3");
+loadSprite("pele(interact)", "sprites/pele(interact).png");
+loadSprite("pele(inactive)", "sprites/pele(inactive).png",{
+  sliceX:3,
+  sliceY:3,
+  anims: {
+    run:{
+      from:0,
+      to: 6,
+    
+    },
+  
+    }
+  }
+,);
 }

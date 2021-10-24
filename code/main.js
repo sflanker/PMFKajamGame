@@ -6,6 +6,7 @@ import initializeLevelOne from "./level-one";
 import initializeLaa from "./Laa";
 import initializeLevelTest from "./level-test";
 import initializeTeamThree from "./team-three";
+import initializeAhSing from "./AhSingTestLevel"
 
 /******************************************************************************
  * 
@@ -56,6 +57,7 @@ initializeLevelOne();
 initializeLaa();
 initializeLevelTest();
 initializeTeamThree();
+initializeAhSing();
 
 scene("intro", () => {
   add([
@@ -65,11 +67,9 @@ scene("intro", () => {
     origin("center"),
     pos(width() / 2, height() / 2),
   ])
+
   let choice = add([
-    trueType(
-      "Level One ->",
-      { font: "Hanalei Fill", size: 32 }
-    ),
+    text("^ Ah Sing Test ^\n<- Laʻa's Test Scene\nLevel One ->"),
     pos(width() / 2, height() / 2 - 40),
     origin("center"),
     scale(1)
@@ -77,7 +77,7 @@ scene("intro", () => {
   choice.scaleTo((width() - 60) / choice.width);
   let prompt = add([
     text("Press an arrow key to select"),
-    pos(width() / 2, height() / 2 + 40),
+    pos(width() / 2, height() / 2 + 80),
     origin("center"),
     scale(1),
   ]);
@@ -91,6 +91,11 @@ scene("intro", () => {
   keyPress("right", () => {
     gameScene = "level-one";
     go("level-one")
+  });
+
+  keyPress("up", () => {
+    gameScene = "AhSing";
+    go("AhSing");
   });
 });
 
