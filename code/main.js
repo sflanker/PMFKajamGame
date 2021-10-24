@@ -2,6 +2,7 @@ import kaboom from "kaboom";
 import loadAssets from "./assets";
 import initializeLevelOne from "./level-one"
 import initializeLaa from "./Laa"
+import initializeAhSing from "./AhSingTestLevel"
 
 /******************************************************************************
  * 
@@ -53,6 +54,7 @@ loadAssets();
 
 initializeLevelOne();
 initializeLaa();
+initializeAhSing();
 
 scene("intro", () => {
   add([
@@ -62,8 +64,9 @@ scene("intro", () => {
     origin("center"),
     pos(width() / 2, height() / 2),
   ])
+
   let choice = add([
-    text("<- Laʻa's Test Scene\nLevel One ->"),
+    text("^ Ah Sing Test ^\n<- Laʻa's Test Scene\nLevel One ->"),
     pos(width() / 2, height() / 2 - 40),
     origin("center"),
     scale(1)
@@ -71,7 +74,7 @@ scene("intro", () => {
   choice.scaleTo((width() - 60) / choice.width);
   let prompt = add([
     text("Press an arrow key to select"),
-    pos(width() / 2, height() / 2 + 40),
+    pos(width() / 2, height() / 2 + 80),
     origin("center"),
     scale(1),
   ]);
@@ -80,6 +83,8 @@ scene("intro", () => {
   keyPress("left", () => go("laa"));
 
   keyPress("right", () => go("level-one"));
+
+  keyPress("up", () => go("AhSing"));
 });
 
 scene("lose", () => {

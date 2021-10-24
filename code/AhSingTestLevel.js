@@ -1,8 +1,8 @@
- export default function initializeLaa() {
+export default function initializeAhSing() {
 
   // define some constants
   const JUMP_FORCE = 1320;
-  const MOVE_SPEED = 480;
+  const MOVE_SPEED = 400;
   const FALL_DEATH = 2400;
 
   const LEVEL = [
@@ -15,7 +15,7 @@
       "         ====         =   $",
       "                      =   $",
       "                      =   $",
-      "     ^         = >    =   @",
+      "     p           p    =   @",
       "===========================",
     ];
 
@@ -82,14 +82,23 @@
       pos(0, -12),
       "portal",
     ],
+    "p": () =>  [
+      sprite("pele(inactive)", {width: 128, height: 128,anim:"run"}),
+       area(), 
+       origin("bot"), 
+       pos(0, 16), 
+       "pele",
+    ]
   };
 
-  scene("laa", () => {
+  scene("AhSing", () => {
     gravity(3200);
 
     // add level to scene
     const level = addLevel(LEVEL, levelConf);
-
+    every("pele",(p)=>{
+      p.play("run",{loop:true})
+    })
     // define player object
     const player = add([
       sprite("bean"),
