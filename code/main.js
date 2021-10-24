@@ -5,6 +5,7 @@ import { trueType } from "./component-true-type"
 import initializeLevelOne from "./level-one";
 import initializeLaa from "./Laa";
 import initializeLevelTest from "./level-test";
+import initializeTeamThree from "./team-three";
 
 /******************************************************************************
  * 
@@ -54,6 +55,7 @@ loadAssets();
 initializeLevelOne();
 initializeLaa();
 initializeLevelTest();
+initializeTeamThree();
 
 scene("intro", () => {
   add([
@@ -65,7 +67,7 @@ scene("intro", () => {
   ])
   let choice = add([
     trueType(
-      "<- Laʻa's Test Scene\nLevel One ->\n⌵⌵ Paul's Test Scene ⌵⌵",
+      "Level One ->",
       { font: "Hanalei Fill", size: 32 }
     ),
     pos(width() / 2, height() / 2 - 40),
@@ -81,11 +83,7 @@ scene("intro", () => {
   ]);
   prompt.scaleTo((width() - 60) / prompt.width);
 
-  keyPress("left", () => go("laa"));
-
-  keyPress("right", () => go("level-one"));
-
-  keyPress("down", () => go("test"));
+  keyPress("right", () => go("team-three"));
 });
 
 scene("lose", () => {
