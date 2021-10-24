@@ -8,6 +8,9 @@ export type Rect = {
 const getWidth = (bounds: Rect) => bounds.right - bounds.left + 1;
 const getHeight = (bounds: Rect) => bounds.bottom - bounds.top + 1;
 
+type MapFn<T, U> = ((item: T, x: number, y: number) => U) | ((item: T) => U);
+type IterateFn<T> = ((item: T, x: number, y: number) => void) | ((item: T) => void);
+
 export function makeQuadTree<T>(items: T[][], leafSize: number = 16): QuadTree<T> {
   function helper(bounds: Rect): QuadTree<T> {
     let w = getWidth(bounds);
@@ -54,7 +57,7 @@ export abstract class QuadTree<T> {
   constructor(public bounds: Rect) {
   }
 
-  map<U>(fn: (item: T) => U): QuadTree<U> {
+  map<U>(fn: MapFn<T, U>): QuadTree<U> {
     let newItems: U[][] = [];
     for (let i = this.bounds.top; i <= this.bounds.bottom; i++) {
       newItems[i] = [];
@@ -63,13 +66,13 @@ export abstract class QuadTree<T> {
     return this.mapInto(newItems, fn);
   }
 
-  abstract mapInto<U>(newItems: U[][], fn: (item: T) => U): QuadTree<U>;
+  abstract mapInto<U>(newItems: U[][], fn: MapFn<T, U>): QuadTree<U>;
 
-  iterateAll(fn: (item: T) => void): void {
+  iterateAll(fn: IterateFn<T>): void {
     this.iterate(this.bounds, fn);
   }
 
-  abstract iterate(bounds: Rect, fn: (item: T) => void): void;
+  abstract iterate(bounds: Rect, fn: IterateFn<T>): void;
 
   // Get all the quads that the specified boundary overlap
   abstract getAllQuads(bounds: Rect): QuadTreeLeaf<T>[][];
@@ -85,21 +88,40 @@ export abstract class QuadTree<T> {
 }
 
 class QuadTreeLeaf<T> extends QuadTree<T> {
-  constructor(bounds: Rect, public items: T[][]) {
+  constructor(
+    bounds: Rect,
+    private items: T[][],
+    private itemsTop: number = 0,
+    private itemsLeft: number = 0) {
+
     super(bounds);
   }
 
-  mapInto<U>(newItems: U[][], fn: (item: T) => U): QuadTree<U> {
+  map<U>(fn: MapFn<T, U>): QuadTree<U> {
+    // For efficiency, pack data into the top left of the array
+    let newItems = [];
+    for (let r = this.bounds.top; r <= this.bounds.bottom; r++) {
+      newItems[r - this.bounds.top] = [];
+      for (let c = this.bounds.left; c <= this.bounds.right; c++) {
+        newItems[r - this.bounds.top][c - this.bounds.left] =
+         fn(this.items[r - this.itemsTop][c - this.itemsLeft], c, r);
+      }
+    }
+
+    return new QuadTreeLeaf<U>(this.bounds, newItems, this.bounds.top, this.bounds.left);
+  }
+
+  mapInto<U>(newItems: U[][], fn: MapFn<T, U>): QuadTree<U> {
     for (let r = this.bounds.top; r <= this.bounds.bottom; r++) {
       for (let c = this.bounds.left; c <= this.bounds.right; c++) {
-        newItems[r][c] = fn(this.items[r][c]);
+        newItems[r][c] = fn(this.items[r - this.itemsTop][c - this.itemsLeft], c, r);
       }
     }
 
     return new QuadTreeLeaf<U>(this.bounds, newItems);
   }
 
-  iterate(bounds: Rect, fn: (item: T) => void): void {
+  iterate(bounds: Rect, fn: IterateFn<T>): void {
     let top = Math.max(bounds.top, this.bounds.top);
     let left = Math.max(bounds.left, this.bounds.left);
     let bottom = Math.min(bounds.bottom, this.bounds.bottom);
@@ -107,7 +129,7 @@ class QuadTreeLeaf<T> extends QuadTree<T> {
 
     for (let r = top; r <= bottom; r++) {
       for (let c = left; c <= right; c++) {
-        fn(this.items[r][c]);
+        fn(this.items[r - this.itemsTop][c - this.itemsLeft], c, r);
       }
     }
   }
@@ -126,7 +148,7 @@ class QuadTreeNode<T> extends QuadTree<T> {
     super(bounds);
   }
 
-  mapInto<U>(newItems: U[][], fn: (item: T) => U): QuadTree<U> {
+  mapInto<U>(newItems: U[][], fn: MapFn<T, U>): QuadTree<U> {
     let newQuads: QuadTree<U>[][] = [];
     for (let r = 0; r < this.quads.length; r++) {
       newQuads[r] = [];
@@ -138,7 +160,7 @@ class QuadTreeNode<T> extends QuadTree<T> {
     return new QuadTreeNode(this.bounds, newQuads);
   }
 
-  iterate(bounds: Rect, fn: (item: T) => void): void {
+  iterate(bounds: Rect, fn: IterateFn<T>): void {
     if (this.isOverlapping(bounds)) {
       for (let r = 0; r < this.quads.length; r++) {
         for (let c = 0; c < this.quads[r].length; c++) {
@@ -163,6 +185,7 @@ class QuadTreeNode<T> extends QuadTree<T> {
             }
           }
         }
+
         result.push(...rows);
       }
     }

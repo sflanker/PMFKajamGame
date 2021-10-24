@@ -2,7 +2,7 @@ import type { Character, CompList, Level, LevelConf, Vec2 } from 'kaboom';
 import instance from './kaboom-instance';
 import { QuadTree, Rect, makeQuadTree } from './lib-quad-tree';
 
-const { add, pos, vec2, addLevel } = instance;
+const { add, addLevel, destroy, height, pos, vec2, width } = instance;
 
 const MaxColorSqDist = 48;
 
@@ -109,11 +109,11 @@ export default async function loadLevel(
   return level;
 }
 
-function parseHex(str) {
+function parseHex(str: string): number {
   return parseInt(str, 16);
 }
 
-function toHex2(num) {
+function toHex2(num: number): string {
   let str =  num.toString(16);
   return str.length >= 2 ? str : `0${str}`;
 }
@@ -203,6 +203,39 @@ class FastLevel implements Level {
       let curCamPos = (<() => Vec2> camPos)();
       if (!lastCamPos || curCamPos.dist(lastCamPos) > 2 * gridSize) {
         lastCamPos = curCamPos;
+        let topLeft = toWorld(vec2(0, 0));
+        let bottomRight = toWorld(vec2(width(), height()))
+        let loadArea = {
+          top: topLeft.y / options.height - LeafQuadSize,
+          left: topLeft.x / options.width - LeafQuadSize,
+          bottom: bottomRight.y / options.height + LeafQuadSize,
+          right: bottomRight.x / options.width + LeafQuadSize
+        };
+
+        let toLoad = this._map.getAllQuads(loadArea);
+        let toLoadKeys: { [key: string]: boolean };
+
+        for (let quadRow of toLoad) {
+          for (let quad of quadRow) {
+            let key = getQuadId(quad);
+            toLoadKeys[key] = true;
+
+            if (!this._loadedQuads[key]) {
+              debug.log(`load ${key}`);
+              this._loadedQuads[key] =
+                quad.map((sym, x, y) => this.spawn(sym, x, y))
+            }
+          }
+        }
+
+        for (let existing of Object.getOwnPropertyNames(this._loadedQuads)) {
+          if (!toLoadKeys[existing]) {
+            // Unload
+            debug.log(`unload ${existing}`);
+            this._loadedQuads[existing].iterateAll(obj => obj && destroy(obj));
+            delete this._loadedQuads[existing];
+          }
+        }
       }
     });
   }
@@ -279,7 +312,14 @@ class FastLevel implements Level {
 	destroy() {
     this._objects.forEach(destroy);
     this._dispose();
+    for (let key of Object.getOwnPropertyNames(this._loadedQuads)) {
+      this._loadedQuads[key].iterateAll(obj => obj && destroy(obj));
+    }
   }
+}
+
+function getQuadId<T>(quad: QuadTree<T>) {
+  return `${quad.bounds.left},${quad.bounds.top}-${quad.bounds.right - quad.bounds.left - 1}`;
 }
 
 // TODO: handle when things are moved from one quad to another with the grid
@@ -312,6 +352,5 @@ function grid(level: Level, p: Vec2) {
 		moveDown() {
 			this.setGridPos(this.gridPos.add(vec2(0, 1)));
 		},
-
 	};
 }
