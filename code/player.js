@@ -9,17 +9,22 @@ export default function initializePlayer(level) {
   
   // define player object
   const player = add([
-    sprite("bean"),
+    sprite("bean", { width: 32, height: 32 }),
     pos(0, 0),
     area(),
     scale(1),
     // makes it fall to gravity and jumpable
     body(),
     // the custom component we defined above
-    big(),
     origin("bot"),
     "bean",
   ]);
+
+  const digArea = add([
+    area(100, 100),
+    pos(225, 135),
+    fixed(),
+  ])
 
   // action() runs every frame
   player.action(() => {
@@ -68,17 +73,56 @@ export default function initializePlayer(level) {
     { resourceType: "wood" },
     "resource"
   ]) */
-  let hasWood = false; 
-  player.collides("wood", (i) => {
-    destroy(i);
-    hasWood = true;
+
+  let woodCount = 0;
+
+  player.collides("wood", (w) => {
+    destroy(w);
     add([
-      sprite("inventory"),
+      sprite("wood"),
       origin("topleft"),
       area(),
       fixed(),
     ]);
+    woodCount += 1;
+    woodLabel.text = woodCount;
   });
+
+  const woodLabel = add([
+    text(""),
+    pos(1, 0),
+    scale(0.2),
+    fixed(),
+  ])
+
+  // instead of using player.isColliding in an if block (which will only run once when the scene is created), use the player.collides event
+  // the contents of your if block there { ... } should be the body of an arrow function that is the second argument to collides("tree", () => { ... }) 👍
+  player.collides("searchable", () =>
+  {
+    //debug.log("show hint");
+    const hint = add([
+      text("E", { size: 48 }),
+      pos(0, 0),
+      fixed(),
+    ]);
+    
+    const searchable = get("searchable")[0];
+    // All event handler functions return another function that disables the event when it is called
+    const stopAction = player.action(() => {
+      // this is where you want an if () { ... } statement
+      // checking if (!player.isColliding(tree) || hasWood)
+      // isColliding might require an actual object instead of a tree, let me check... it works! could use an || there, depending on what behavior you want
+      // odd, not sure why it's not working! so confused!
+      // oh, actually maybe we do need the object. good now
+      if ((!player.isColliding(searchable))){
+        //debug.log(`destroy hint hasWood: ${hasWood}`);
+        destroy(hint);
+        // stop the action, since it will get recreated next time the player collides with the tree.
+        stopAction();
+      }
+    })
+    // add an player.action(() => { }) /* oops */ here and check if the player is no longer colliding with the tree, in which case, destroy(hint)
+  })
 
   // jump with space
   keyPress("space", () => {
@@ -104,26 +148,53 @@ export default function initializePlayer(level) {
     player.weight = 1;
   });
 
+  let axeEquiped = false;
+  let pickaxeEquipped = false;
+  let shovelEquiped = false;
+
+  keyPress("1", () => {
+    axeEquiped = true;
+    pickaxeEquipped = false;
+    shovelEquiped = false;
+  });
+  keyPress("2", () => {
+    axeEquiped = false;
+    pickaxeEquipped = true;
+    shovelEquiped = false;
+  });
+  keyPress("3", () => {
+    axeEquiped = false;
+    pickaxeEquipped = false;
+    shovelEquiped = true;
+  });
+
   keyPress("e", () => 
   {
-    every("tree", (t) => 
+    every("searchable", (s) => 
     {
-      if (player.isColliding(t)){
-        if (t.is("tree") && !hasWood) 
+      if (player.isColliding(s)){
+        if (s.is("searchable")) 
         {
-          const wood = level.spawn("#",  t.gridPos.sub(0, 1));
-          wood.jump();
+          if("holdsWood" && axeEquiped)
+          {
+            const wood = level.spawn("#",s.gridPos.sub(0, 5));
+            wood.jump();
+            destroy(s);
+          }
         }
       }
     })
   });
 
-  /*
-  add([
-    sprite("inventory"),
-    origin("topleft")     
-  ]);
-   */
+ clicks("breakable", (b) => 
+ {
+    destroy(b);
+ })
+
+ hovers("breakable", (h) => 
+ {
+   cursor("apple");
+ })
 
   return player;
 }

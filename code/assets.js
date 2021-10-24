@@ -8,5 +8,7 @@ export default function loadAssets() {
   loadSprite("tree", "sprites/Tree.png");
   loadSprite("wood", "sprites/wood.png");
   loadSprite("box", "sprites/box.png");
+  loadSprite("breakableSand", "sprites/sand1.png");
+  loadSprite("UnbreakableSand", "sprites/Unbreakabe Sand.png");
   loadSprite("inventory", "sprites/inventory.png");
 }

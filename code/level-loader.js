@@ -1,4 +1,3 @@
-
 const MaxColorSqDist = 48;
 
 // Helper function to create a level

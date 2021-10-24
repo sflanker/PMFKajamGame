@@ -4,48 +4,50 @@ import initializePlayer from "./player"
 export default function initializeLevelOne() {
 
   const LEVEL = [
-      "                          $",
-      "                          $",
-      "                          $",
-      "                          $",
-      "                          $",
-      "                      =   $",
-      "         ====         =   $",
-      "                      =   $",
-      "                      =    ",
-      "     ^         = >    =   @",
+      "=======================    ",
+      "                      b    ",
+      "                      b    ",
+      "                      b    ",
+      "                      b    ",
+      "                      b    ",
+      "            ===       b    ",
+      "                      b    ",
+      "                      b    ",
+      "     ^    ^    = >    b   @",
       "===========================",
-    ];
+  ];
+
 
 
   // define what each symbol means in the level graph
   const levelConf = {
     // grid size
-    width: 64,
-    height: 64,
+    width: 32,
+    height: 32,
     // define each object as a list of components
     "=": () => [
-      sprite("grass"),
+      sprite("UnbreakableSand"),
       area(),
       solid(),
       origin("bot"),
     ],
-    "$": () => [
-      sprite("coin"),
+    "b": () => [
+      sprite("breakableSand"),
       area(),
-      pos(0, -9),
+      solid(),
       origin("bot"),
-      "coin",
+      "breakable",
     ],
     "^": () => [
-      sprite("tree"),
+      sprite("tree", { width: 32, height: 32 }),
       scale(10),
       area({ scale: 0.2 }),
       origin("bot"),
-      "tree",
+      "searchable",
+      "holdsWood",
     ],
     "#": () => [
-      sprite("wood"),
+      sprite("wood", { width: 32, height: 32 }),
       area(),
       scale(2),
       origin("bot"),
@@ -53,13 +55,13 @@ export default function initializeLevelOne() {
       "wood",
     ],
     "-": () => [
-      sprite("inventory"),
+      sprite("inventory", { width: 32, height: 32 }),
       scale(2),
       origin("botleft"),
       "inventory",
     ],
     ">": () => [
-      sprite("googoly"),
+      sprite("googoly", { width: 32, height: 32 }),
       area(),
       origin("bot"),
       body(),
@@ -67,7 +69,7 @@ export default function initializeLevelOne() {
       "enemy",
     ],
     "@": () => [
-      sprite("portal"),
+      sprite("portal", { width: 32, height: 32 }),
       area({ scale: 0.5, }),
       origin("bot"),
       pos(0, -12),
@@ -84,10 +86,7 @@ export default function initializeLevelOne() {
     const player = initializePlayer(level);
 
     player.collides("portal", () => {
-      if (hasWood) {
-        // TODO: Handle advancement to next level
         go("win");
-      }
     });
   });
 }

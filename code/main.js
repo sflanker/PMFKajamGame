@@ -84,14 +84,14 @@ scene("intro", () => {
 
 scene("lose", () => {
   add([
-    text("You Lose"),
+    text("Gameover"),
   ]);
   keyPress(() => go("level-one"));
 });
 
 scene("win", () => {
   add([
-    text("You Win"),
+    text("Victory"),
   ]);
   keyPress(() => go("level-one"));
 });
