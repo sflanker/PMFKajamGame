@@ -3,6 +3,7 @@ import instance from "./kaboom-instance";
 import loadAssets from "./assets";
 import { trueType } from "./component-true-type"
 import initializeLevelOne from "./level-one";
+import initializeNalu from "./Nalu";
 import initializeLaa from "./Laa";
 import initializeLevelTest from "./level-test";
 import initializeTeamThree from "./team-three";
