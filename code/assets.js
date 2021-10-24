@@ -16,12 +16,15 @@ export default function loadAssets() {
   loadSprite("Tile-Sand-Unbreakable", "sprites/Tile-Sand-Unbreakable.png");
   loadSprite("Tile-Sand", "sprites/Tile-Sand.png");
   loadSprite("Tile-Thatch", "sprites/Tile-Thatch.png");
+  loadSprite("Tile-Water", "sprites/Tile-Water.png");
+  loadSprite("Tile-Rock", "sprites/Tile-Rock.png");
+  loadSprite("Tile-Cave", "sprites/Tile-Cave.png");
 
   // Backgrounds
   loadSprite("Beach-Background", "sprites/Beach-Background.png");
 
   // Scenery
-  loadSprite("Scenery-Beach-Hale-PaulEdits", "sprites/Scenery-Beach-Hale-PaulEdits.png");
+  loadSprite("Scenery-Beach-Hale", "sprites/Scenery-Beach-Hale.png");
   loadSprite("Scenery-Palm-Tree-With-Crab", "sprites/Scenery-Palm-Tree-With-Crab.png");
 
   // Items
@@ -43,6 +46,25 @@ export default function loadAssets() {
         idle: {
           from: 6,
           to: 12
+        },
+      }
+    }
+  );
+  
+  loadSprite(
+    "NPC-Goat",
+    "sprites/NPC-Goat.png",
+    {
+      sliceX: 3,
+      sliceY: 2,
+      anims: {
+        bleat: {
+          from: 0,
+          to: 6
+        },
+        idle: {
+          from: 0,
+          to: 0
         },
       }
     }
@@ -75,6 +97,8 @@ export default function loadAssets() {
       }
     }
   );
+  
+  loadSprite("Missing", "sprites/Missing.png");
 
   // Dynamic loading wasn't working, so this is in the HTML file now.
   //loadTrueType("hanalei", "fonts/HanaleiFill.ttf");

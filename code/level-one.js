@@ -1,137 +1,111 @@
-import loadLevel from './level-loader';
-import patrol from "./component-patrol";
-import initializePlayer from "./player";
+import loadLevel from "./level-loader";
+import initializePlayer from "./old-player";
 
 export default function initializeLevelOne() {
-
-  // define what each symbol means in the level graph
-  const levelConf =
-  {
-    // grid size
-    width: 32,
-    height: 32,
-    // define each object as a list of components
-    "=": () =>
-      [
-        sprite("UnbreakableSand"),
-        area(),
-        solid(),
-        origin("bot"),
-      ],
-    "b": () =>
-      [
-        sprite("breakableSand"),
-        area(),
-        solid(),
-        origin("bot"),
-        "breakable",
-      ],
-    "^": () =>
-      [
-        sprite("tree", { width: 32, height: 32 }),
-        scale(10),
-        area({ scale: 0.2 }),
-        origin("bot"),
-        "searchable",
-        "holdsWood",
-      ],
-    "#": () =>
-      [
-        sprite("wood", { width: 32, height: 32 }),
-        area(),
-        scale(2),
-        origin("bot"),
-        body(),
-        "wood",
-      ],
-    "-": () =>
-      [
-        sprite("inventory", { width: 32, height: 32 }),
-        scale(2),
-        origin("botleft"),
-        "inventory",
-      ],
-    ">": () =>
-      [
-        sprite("googoly", { width: 32, height: 32 }),
-        area(),
-        origin("bot"),
-        body(),
-        patrol(),
-        "enemy",
-      ],
-    "@": () =>
-      [
-        sprite("portal", { width: 32, height: 32 }),
-        area({ scale: 0.5, }),
-        origin("bot"),
-        pos(0, -12),
-        "portal",
-      ],
-  };
-
   const TileSize = 32;
   const TileSpriteOpts = { width: TileSize, height: TileSize };
 
-  scene('test', async () => {
+  scene("level-one", async () => {
     const level = await loadLevel(
-      'sprites/Kaena-Level-1-v1.png',
+      "sprites/Level-One-Map-v2.png",
       {
         width: TileSize,
         height: TileSize,
         fast: true,
         // Missing color tile
-        '?': () => [
-          sprite('portal', TileSpriteOpts),
+        "?": () => [
+          sprite("Missing", TileSpriteOpts),
+          origin("bottom"),
         ]
       },
       {
-        '#000000-=': () => [
-          sprite('box', TileSpriteOpts),
+        "#000000-=": () => [
+          sprite("Tile-Bedrock", TileSpriteOpts),
+          origin("bottom"),
           area(),
           solid(),
-          'bedrock'
+          "bedrock"
         ],
-        "#9b870c-=": () => [
-          sprite("UnbreakableSand", TileSpriteOpt),
+        "#9b870c-#": () => [
+          sprite("Tile-Sand-Unbreakable", TileSpriteOpts),
+          origin("bottom"),
           area(),
           solid(),
-          origin("bot"),
         ],
-        "b": () => [
-          sprite("breakableSand"),
+        "#fdee73-*": () => [
+          sprite("Tile-Sand", TileSpriteOpts),
+          origin("bottom"),
           area(),
           solid(),
-          origin("bot"),
           "breakable",
+          // TODO: randomly drop shells?
         ],
-        "^": () => [
-          sprite("tree", { width: 32, height: 32 }),
-          scale(10),
-          area({ scale: 0.2 }),
-          origin("bot"),
+        "#3d3838": () => [
+          sprite("Tile-Rock", TileSpriteOpts),
+          origin("bottom"),
+          area(),
+          solid(),
+          "rock",
+        ],
+        "#757575": () => [
+          sprite("Tile-Cave", TileSpriteOpts),
+          origin("bottom"),
+          "cave"
+        ],
+        "#613000": () => [
+          sprite("Tile-Planks", TileSpriteOpts),
+          origin("bottom"),
+          area(),
+          solid(),
+          "planks"
+        ],
+        "#dc6600": () => [
+          sprite("Tile-Thatch", TileSpriteOpts),
+          origin("bottom"),
+          area(),
+          solid(),
+          "thatch"
+        ],
+        "#0040cb": () => [
+          sprite("Tile-Water", TileSpriteOpts),
+          origin("bottom"),
+          "water"
+        ],
+        "#ff0000": () => [
+          sprite("Tile-Lava", TileSpriteOpts),
+          origin("bottom"),
+          "lava"
+          // TODO: deal damage
+        ],
+        "#ea00ff": () => [
+          sprite("NPC-Pele", { width: 128, height: 128, anim: "idle" }),
+          origin("bottom"),
+          area(), 
+          "pele"
+          // TODO: add behavior (use o'o, throw lava in random trajectories)
+        ],
+        "#ffffff": () => [
+          sprite("NPC-Goat", { width: 128, height: 128, anim: "idle" }),
+          origin("bottom"),
+          "goat"
+          // TODO: bleat at random?
+        ],
+        "#006400-|": () => [
+          sprite("Scenery-Palm-Tree-With-Crab"),
+          origin("bottom"),
+          //scale(2),
+          area(),
           "searchable",
-          "holdsWood",
-        ]
+          { resourceType: "wood" },
+        ],
+        "#6e039d": () => [
+          sprite("Scenery-Beach-Hale"),
+          "hale"
+        ],
       }
     );
 
-    add([
-      text(''),
-      // pos(-width() / 2 + 10, -height() / 2 + 10),
-      pos(0, 0),
-      fixed(),
-      "fps-display"
-    ]);
-
-    action("fps-display", obj => {
-      obj.text = `${debug.fps()} (${debug.objCount()})`;
-    });
-
-    const player = initializePlayer(level);
-
-    player.collides("portal", () => {
-      go("win");
-    });
+    debugger;
+    const player = initializePlayer(level, { spawn: vec2(TileSize * 50, TileSize * 29) });
   });
 }

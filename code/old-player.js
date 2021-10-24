@@ -1,24 +1,18 @@
 import big from "./component-big";
 
 // This initializes player related game objects
-export default function initializePlayer(level, options) {
+export default function initializePlayer(level) {
   // define some constants
   const JUMP_FORCE = 620;
   const MOVE_SPEED = 480;
   const FALL_DEATH = 2400;
 
-  if (!options) {
-    options = { };
-  }
-  if (!options.spawn) {
-    options.spawn = vec2(100, 40);
-  }
 
   // define player object
   const player = add
   ([
     sprite("bean", { width: 32, height: 32 }),
-    pos(options.spawn.x, options.spawn.y),
+    pos(120, 40),
     area(),
     scale(1),
     // makes it fall to gravity and jumpable
