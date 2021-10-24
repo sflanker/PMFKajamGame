@@ -77,23 +77,31 @@ scene("intro", () => {
   ]);
   prompt.scaleTo((width() - 60) / prompt.width);
 
-  keyPress("left", () => go("laa"));
+  keyPress("left", () => {
+    gameScene = "laa";
+    go("laa")
+  });
 
-  keyPress("right", () => go("level-one"));
+  keyPress("right", () => {
+    gameScene = "level-one";
+    go("level-one")
+  });
 });
+
+let gameScene;
 
 scene("lose", () => {
   add([
     text("You Lose"),
   ]);
-  keyPress(() => go("level-one"));
+  keyPress(() => go(gameScene));
 });
 
 scene("win", () => {
   add([
     text("You Win"),
   ]);
-  keyPress(() => go("level-one"));
+  keyPress(() => go(gameScene));
 });
 
 go("intro");
