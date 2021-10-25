@@ -60,7 +60,7 @@ initializeTeamThree();
 initializeAhSing();
 
 scene("intro", () => {
-  debug.log('play music')
+  // debug.log('play music')
     const music = play("Soothing_and_Fading(IGT)", {
       volume: 0.5,
       loop: true
