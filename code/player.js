@@ -284,8 +284,6 @@ export default function initializePlayer(level, options) {
     updateSelection();
   });
 
-  let hasSpokenTo = false;
-
   keyPress("e", () => {
     every("searchable", (s) => {
       if (player.isColliding(s)) {
@@ -304,9 +302,16 @@ export default function initializePlayer(level, options) {
     every("NPC", (n) => {
       if (player.isColliding(n)) {
         if (n.is("NPC")) {
-          if (!hasSpokenTo) {
-            quest.text = "Travel across this HUGE land and deliver 7 wood to Pele";
-          }
+          const quest = add([
+            text("Travel across this HUGE land\nand deliver 7 wood to Pele", { size: 32 }),
+            pos(20, height() * 0.25),
+            fixed(),
+            layer("overlay"),
+            scale(1),
+            lifespan(10, { fade: 1 })
+          ]);
+     
+          quest.scaleTo((width() - 40) / quest.width);
         }
       }
     })
@@ -321,12 +326,6 @@ export default function initializePlayer(level, options) {
     })
   });
 
-  const quest = add([
-    text("", { size: 32 }),
-    pos(40, height() - 850),
-    fixed(),
-    z(2),
-  ])
 
   clicks("breakable", (b) => {
     if (shovelEquipped) {

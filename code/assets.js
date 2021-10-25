@@ -1,5 +1,13 @@
 // import { loadTrueType } from "./component-true-type"
 
+loadSprite("rock-formation-1", "sprites/rock-formation-1.png.png");
+
+loadSprite("seashell", "sprites/seashell.png");
+
+loadSprite("Stone-1", "sprites/Stone-1.png.png");
+
+loadSprite("pickaxe-1", "sprites/pickaxe-1.png.png");
+
 export default function loadAssets() {
   loadSprite("bean", "sprites/bean.png");
   loadSprite("googoly", "sprites/googoly.png");
