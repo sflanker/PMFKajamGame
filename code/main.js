@@ -3,10 +3,6 @@ import instance from "./kaboom-instance";
 import loadAssets from "./assets";
 import { trueType } from "./component-true-type"
 import initializeLevelOne from "./level-one";
-import initializeNalu from "./Test-Nalu";
-import initializeLaa from "./Test-Laa";
-import initializeTeamThree from "./Test-team-three";
-import initializeAhSing from "./Test-AhSingTestLevel"
 
 /******************************************************************************
  * 
@@ -54,12 +50,7 @@ import initializeAhSing from "./Test-AhSingTestLevel"
  *****************************************************************************/
 
 loadAssets();
-
 initializeLevelOne();
-initializeNalu();
-initializeLaa();
-initializeTeamThree();
-initializeAhSing();
 
 scene("intro", () => {
   const music = play("Soothing_and_Fading(IGT)", {
@@ -93,17 +84,6 @@ scene("intro", () => {
 
   coverImage.scaleTo((coverSize) / coverImage.height);
 
-  /*
-  let choice = add([
-    trueType(
-      "1. Level One\n2. Nalu's Code\n3. Laa's Code\n4. Team Three\n5. Team Ah Sing",
-      { font: "Hanalei Fill", size: 64 }),
-    pos(width() / 2, height() / 2 - 40),
-    origin("center"),
-    scale(1)
-  ]);
-  choice.scaleTo(Math.min((width() - 80) / choice.width, (height() - 180) / choice.height));
-  */
   let prompt = add([
     trueType(
       "Press [Space] To Start.",
@@ -117,26 +97,6 @@ scene("intro", () => {
   keyPress("space", () => {
     gameScene = "level-one";
     go("level-one")
-  });
-
-  keyPress("2", () => {
-    gameScene = "nalu";
-    go("nalu")
-  });
-
-  keyPress("3", () => {
-    gameScene = "laa";
-    go("laa")
-  });
-
-  keyPress("4", () => {
-    gameScene = "team-three";
-    go("team-three")
-  });
-
-  keyPress("5", () => {
-    gameScene = "AhSing";
-    go("AhSing");
   });
 });
 

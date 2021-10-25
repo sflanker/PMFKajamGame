@@ -32,6 +32,8 @@ export default function loadAssets() {
   loadSprite("Tile-Water", "sprites/Tile-Water.png");
   loadSprite("Tile-Rock", "sprites/Tile-Rock.png");
   loadSprite("Tile-Cave", "sprites/Tile-Cave.png");
+  loadSprite("Tile-Lava", "sprites/Tile-Lava.png");
+
 
   // Backgrounds
   loadSprite("Beach-Background", "sprites/Beach-Background.png");

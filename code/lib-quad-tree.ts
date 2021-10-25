@@ -24,8 +24,9 @@ export function makeQuadTree<T>(items: T[][], leafSize: number = 16): QuadTree<T
         Math.ceil(Math.log2(h / leafSize))
       );
       let subSize = leafSize * (2 ** (levels - 1));
-      let rows = Math.ceil(w / subSize);
-      let cols = Math.ceil(h / subSize);
+      let rows = Math.ceil(h / subSize);
+      let cols = Math.ceil(w / subSize);
+
       let subs: QuadTree<T>[][] = [];
       for (let r = 0; r < rows; r++) {
         subs[r] = [];
@@ -33,8 +34,8 @@ export function makeQuadTree<T>(items: T[][], leafSize: number = 16): QuadTree<T
           let subBounds = {
             top: bounds.top + r * subSize,
             left: bounds.left + c * subSize,
-            bottom: bounds.top + r * subSize + subSize - 1,
-            right: bounds.left + c * subSize + subSize - 1
+            bottom: Math.min(bounds.bottom, bounds.top + r * subSize + subSize - 1),
+            right: Math.min(bounds.right, bounds.left + c * subSize + subSize - 1)
           };
           subs[r][c] = helper(subBounds);
         }

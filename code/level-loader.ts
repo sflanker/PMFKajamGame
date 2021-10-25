@@ -168,7 +168,7 @@ class ImageData {
   }
 }
 
-const LeafQuadSize = 8;
+const LeafQuadSize = 16;
 
 class FastLevel implements Level {
   private _offset: Vec2;
@@ -195,7 +195,8 @@ class FastLevel implements Level {
     this._cols = map.map(r => r.length).reduce((max, v) => v > max ? v : max);
     this._offset = vec2(options.pos ?? vec2(0, 0));
 
-    this._map = makeQuadTree(map.map(row => row.split('')), LeafQuadSize);
+    let data = map.map(row => row.split(''));
+    this._map = makeQuadTree(data, LeafQuadSize);
 
     let lastCamPos = undefined;
     let gridSize = Math.min(this.options.width, this.options.height);
