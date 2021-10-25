@@ -13,24 +13,25 @@ import initializeAhSing from "./Test-AhSingTestLevel"
  * Backlog
  * =======
  * 
- * TODO: loading screen
+ * Done(Mitchell & Paul): loading screen
  *
  * Player behavior
  *   DONE(Nalu): Player Movement
- *   IN PROGRESS(Nalu): Resource gathering
+ *   Done(Nalu): Resource gathering
  *   Done(Nalu): Inventory (track resources, display)
- *   IN PROGRESS(Nalu): Terrain interactions (dig)
+ *   Done(Nalu): Terrain interactions (dig)
  *   TODO: Mob interactions (mele attacks, weapons?, jump attack)
  *   TODO: Track/display health
  *   TODO: Crafting/Trading (convert resources into items. overlay screen? what items?
  *         needs specification)
- *   TODO: Items (equip item? display item being held? use item?)
+ *   Done(Nau): Items (equip item? display item being held? use item?)
+ *   Done(Laa): Sound Effects
  *
  * Generic level functionality
- *   TODO(Paul): Level map loader
- *   TODO: Camera behavior (follow player?)
- *   TODO: Background effects (parallax?)
- *   TODO: Foreground object capabilities (add sprite, specifiy size, location,
+ *   Done(Paul): Level map loader *** HAS BUGS
+ *   Done(Nalu): Camera behavior
+ *   Done(Paul): Background effects *** HAS BUGS!
+ *   Done(Paul/Nalu): Foreground object capabilities (add sprite, specifiy size, location,
  *         define interaction behavior)
  *   TODO: Mobs: spawning, movement, response to player, deal damage to player
  *
@@ -39,9 +40,10 @@ import initializeAhSing from "./Test-AhSingTestLevel"
  *         gameplay? boss fight? or just a cinematic?
  *
  * Level one design:
- *   TODO(Kaʻena?): terrain & platform layout
+ *   Done(Kaʻena?): terrain & platform layout
+ *   Done: define forground objects
+ *   Done(Jacob & Nalu): Level one win condition NPC
  *   TODO: hidden resource locations
- *   TODO: define forground objects
  * 
  *****************************************************************************/
 
@@ -60,19 +62,18 @@ initializeTeamThree();
 initializeAhSing();
 
 scene("intro", () => {
-  // debug.log('play music')
-    const music = play("Soothing_and_Fading(IGT)", {
-      volume: 0.5,
-      loop: true
-    });
+  const music = play("Soothing_and_Fading(IGT)", {
+    volume: 0.5,
+    loop: true
+  });
 
-    let sceneCleanup = add([
-      "scene-cleanup"
-    ]);
+  let sceneCleanup = add([
+    "scene-cleanup"
+  ]);
 
-    sceneCleanup.on("destroy", () => {
-      music.stop();
-    });
+  sceneCleanup.on("destroy", () => {
+    music.stop();
+  });
 
   let coverSize = Math.min(width() - 40, height() - 40);
   add([
