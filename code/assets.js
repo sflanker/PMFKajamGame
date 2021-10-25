@@ -11,6 +11,9 @@ export default function loadAssets() {
   loadSprite("stone", "sprites/Stone-1.png.png");
   loadSprite("seashell", "sprites/seashell.png");
 
+  // Welcome Page
+  loadSprite("To-The-Top", "sprites/To-The-Top.png");
+
   // Tiles
   loadSprite("Tile-Bedrock", "sprites/Tile-Bedrock.png");
   loadSprite("Tile-Dirt", "sprites/Tile-Dirt.png");

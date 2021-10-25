@@ -65,7 +65,7 @@ scene("intro", () => {
       volume: 0.5,
       loop: true
     });
-    
+
     let sceneCleanup = add([
       "scene-cleanup"
     ]);
@@ -73,15 +73,26 @@ scene("intro", () => {
     sceneCleanup.on("destroy", () => {
       music.stop();
     });
-  
+
+  let coverSize = Math.min(width() - 40, height() - 40);
   add([
-    rect(width() - 40, height() - 40),
+    rect(coverSize, coverSize),
     color(150, 150, 150),
     outline(4, rgb(0, 0, 0)),
     origin("center"),
     pos(width() / 2, height() / 2),
   ])
 
+  let coverImage = add([
+    sprite("To-The-Top"),
+    pos(width() / 2, height() / 2),
+    origin("center"),
+    scale(1)
+  ]);
+
+  coverImage.scaleTo((coverSize) / coverImage.height);
+
+  /*
   let choice = add([
     trueType(
       "1. Level One\n2. Nalu's Code\n3. Laa's Code\n4. Team Three\n5. Team Ah Sing",
@@ -91,17 +102,18 @@ scene("intro", () => {
     scale(1)
   ]);
   choice.scaleTo(Math.min((width() - 80) / choice.width, (height() - 180) / choice.height));
+  */
   let prompt = add([
     trueType(
-      "Press a number key to select",
+      "Press [Space] To Start.",
       { font: "Hanalei Fill", size: 32 }),
-    pos(width() / 2, height() - 40),
+    pos(width() / 2, height() - 20),
     origin("bot"),
     scale(1),
   ]);
-  prompt.scaleTo((width() - 80) / prompt.width);
+  prompt.scaleTo((coverSize - 20) / prompt.width);
 
-  keyPress("1", () => {
+  keyPress("space", () => {
     gameScene = "level-one";
     go("level-one")
   });
