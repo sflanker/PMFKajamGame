@@ -221,6 +221,7 @@ class FastLevel implements Level {
             toLoadKeys[key] = true;
 
             if (!this._loadedQuads[key]) {
+              // console.log(`load: ${key}`);
               this._loadedQuads[key] =
                 quad.map((sym, x, y) => this.spawn(sym, x, y))
             }
@@ -230,6 +231,7 @@ class FastLevel implements Level {
         for (let existing of Object.getOwnPropertyNames(this._loadedQuads)) {
           if (!toLoadKeys[existing]) {
             // Unload
+            // console.log(`unload: ${existing}`);
             this._loadedQuads[existing].iterateAll(obj => obj && destroy(obj));
             delete this._loadedQuads[existing];
           }

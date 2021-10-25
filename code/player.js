@@ -32,6 +32,10 @@ export default function initializePlayer(level, options) {
       "player",
     ]);
 
+    player.weight = 0;
+
+  setTimeout(() => { player.weight = 1; }, 500);
+
   const digArea = add
     ([
       area(100, 100),

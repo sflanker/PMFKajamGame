@@ -6,8 +6,9 @@ export default function initializeLevelOne() {
   const TileSize = 32;
   const TileSpriteOpts = { width: TileSize, height: TileSize };
 
+  console.log('create level-one');
   scene("level-one", async () => {
-
+    console.log('initializing level-one');
     const music = play("Venture(IGT)", {
       volume: 0.5,
       loop: true
@@ -179,7 +180,7 @@ export default function initializeLevelOne() {
       }
     );
 
-    //debugger;
+    console.log('initializing player');
     const player = initializePlayer(level, { spawn: vec2(TileSize * 50, TileSize * 20) });
 
     action(() => {
