@@ -1,4 +1,5 @@
 import big from "./component-big";
+import onEvent from "./component-on-event";
 
 // This initializes player related game objects
 export default function initializePlayer(level, options) {
@@ -18,30 +19,42 @@ export default function initializePlayer(level, options) {
   }
 
   // define player object
-  const player = add
-    ([
-      sprite("Player"),
-      pos(options.spawn.x, options.spawn.y),
-      area({ width: 11, height: 24, offset: vec2(7, 1) }),
-      scale(2.6),
-      // makes it fall to gravity and jumpable
-      body(),
-      // the custom component we defined above
-      origin("bot"),
-      layer("player"),
-      "player",
-    ]);
+  const player = add([
+    sprite("Player"),
+    pos(options.spawn.x, options.spawn.y),
+    area({ width: 11, height: 24, offset: vec2(7, 1) }),
+    scale(2.6),
+    // makes it fall to gravity and jumpable
+    body(),
+    // the custom component we defined above
+    origin("bot"),
+    layer("player"),
+    onEvent("load", () => console.log("player loaded")),
+    "player",
+  ]);
 
-    player.weight = 0;
-
+  // The player will inexplicably fall through the ground on some systems.
+  // This is a hack to prevent that
+  player.weight = 0;
   setTimeout(() => { player.weight = 1; }, 500);
 
-  const digArea = add
-    ([
-      area(100, 100),
-      pos(225, 135),
-      fixed(),
-    ])
+  // Debug code for the falling issue
+  let yPos = player.pos.y;
+  let stopReportingFall = player.action(() => {
+    if (!player.grounded()) {
+      let newY = player.pos.y;
+      console.log(`falling: ${(newY - yPos) / dt()}`);
+      yPos = newY;
+    } else {
+      stopReportingFall();
+    }
+  });
+
+  const digArea = add ([
+    area(100, 100),
+    pos(225, 135),
+    fixed(),
+  ]);
 
   // action() runs every frame
   player.action(() => {
@@ -114,17 +127,25 @@ export default function initializePlayer(level, options) {
 
   // instead of using player.isColliding in an if block (which will only run once when the scene is created), use the player.collides event
   // the contents of your if block there { ... } should be the body of an arrow function that is the second argument to collides("tree", () => { ... }) 👍
-  player.collides("searchable", () => {
+  player.collides("searchable", (s) => {
     //debug.log("show hint");
-    const hint = add
-      ([
-        text("E", { size: 48 }),
-        layer("overlay"),
-        pos(0, 0),
-        fixed(),
-      ]);
+    let hintText = "Press E to interact.";
 
-    const searchable = get("searchable")[0];
+    if (s.compatibleTools &&
+        !s.compatibleTools.includes(getEquippedTool())) {
+      hintText = "Press a number key to\nselect the appropriate\ntool.";
+    }
+
+    const hint = add([
+      text(hintText, { size: 48 }),
+      layer("overlay"),
+      pos(10, 10),
+      fixed(),
+      scale(1)
+    ]);
+
+    hint.scaleTo((width() * 0.4) / hint.width)
+
     // All event handler functions return another function that disables the event when it is called
     const stopAction = player.action(() => {
       // this is where you want an if () { ... } statement
@@ -132,7 +153,7 @@ export default function initializePlayer(level, options) {
       // isColliding might require an actual object instead of a tree, let me check... it works! could use an || there, depending on what behavior you want
       // odd, not sure why it's not working! so confused!
       // oh, actually maybe we do need the object. good now
-      if ((!player.isColliding(searchable))) {
+      if ((!player.isColliding(s))) {
         //debug.log(`destroy hint hasWood: ${hasWood}`);
         destroy(hint);
         // stop the action, since it will get recreated next time the player collides with the tree.
@@ -140,6 +161,26 @@ export default function initializePlayer(level, options) {
       }
     })
     // add an player.action(() => { }) /* oops */ here and check if the player is no longer colliding with the tree, in which case, destroy(hint)
+  })
+  player.collides("NPC", (s) => {
+    let hintText = "Press E to interact.";
+
+    const hint = add([
+      text(hintText, { size: 48 }),
+      layer("overlay"),
+      pos(10, 10),
+      fixed(),
+      scale(1)
+    ]);
+
+    hint.scaleTo((width() * 0.4) / hint.width)
+
+    const stopAction = player.action(() => {
+      if ((!player.isColliding(s))) {
+        destroy(hint);
+        stopAction();
+      }
+    })
   })
 
   // jump with space
@@ -253,6 +294,16 @@ export default function initializePlayer(level, options) {
   let pickaxeEquipped = false;
   let shovelEquipped = false;
 
+  function getEquippedTool() {
+    if (axeEquipped) {
+      return "axe";
+    } else if (shovelEquipped) {
+      return "shovle";
+    } else if (pickaxeEquipped) {
+      return "pickaxe";
+    }
+  }
+
   function updateSelection() {
     if (axeEquipped) {
       selection.pos.x = width() / 2 - 32;
@@ -288,7 +339,7 @@ export default function initializePlayer(level, options) {
     every("searchable", (s) => {
       if (player.isColliding(s)) {
         if (s.is("searchable")) {
-          if (axeEquipped && s.compatibleTools.includes("axe")) {
+          if (axeEquipped && s.compatibleTools && s.compatibleTools.includes("axe")) {
             // check resource type?
             const wood = level.spawn("w", s.gridPos.sub(0, 5));
             wood.jump();

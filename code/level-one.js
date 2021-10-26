@@ -1,6 +1,6 @@
 import loadLevel from "./level-loader";
 import initializePlayer from "./player";
-import on from "./component-on";
+import onEvent from "./component-on-event";
 
 export default function initializeLevelOne() {
   const TileSize = 32;
@@ -166,7 +166,7 @@ export default function initializeLevelOne() {
           scale(2),
           area(),
           layer("foreground-scenery"),
-          on("mined", prevent),
+          onEvent("mined", prevent),
           "searchable",
           { resourceType: "wood", compatibleTools: ["axe"] },
         ]),
