@@ -108,7 +108,7 @@ export default function initializeLevelOne() {
             // TODO: randomly drop shells?
             prevent();
             // Add a dug sand sprite
-            level.spawn(".", )
+            level.spawn(".", t.gridPos)
           }),
           "breakable",
         ]),
@@ -119,7 +119,7 @@ export default function initializeLevelOne() {
           solid(),
           "rock",
         ],
-        "#757575": () => [
+        "#757575-+": () => [
           sprite("Tile-Cave", TileSpriteOpts),
           origin("bot"),
           "cave"
@@ -156,7 +156,8 @@ export default function initializeLevelOne() {
           origin("bot"),
           area(),
           layer("foreground-scenery"),
-          "Pele"
+          "Pele",
+          onEvent("load", (p) => { p.play("idle", { loop: true }) })
           // TODO: add behavior (use o'o, throw lava in random trajectories)
         ],
         "#ffffff": () => [
@@ -190,6 +191,13 @@ export default function initializeLevelOne() {
         "#00d9ee": () => [
           sprite("portal"),
           origin("bot"),
+          area(),
+          layer("foreground-scenery"),
+          onEvent("quadLoaded", (t) => {
+            // We could check a neighboring object an clone it, but for expediency
+            let c = level.spawn("+", t.gridPos);
+            c.layer = "background-scenery";
+          })
         ]
       }
     );

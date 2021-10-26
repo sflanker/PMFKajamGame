@@ -58,6 +58,8 @@ export abstract class QuadTree<T> {
   constructor(public bounds: Rect) {
   }
 
+  abstract get(x: number, y: number): T;
+
   map<U>(fn: MapFn<T, U>): QuadTree<U> {
     let newItems: U[][] = [];
     for (let i = this.bounds.top; i <= this.bounds.bottom; i++) {
@@ -96,6 +98,13 @@ class QuadTreeLeaf<T> extends QuadTree<T> {
     private itemsLeft: number = 0) {
 
     super(bounds);
+  }
+
+  get(x: number, y: number): T {
+    if (x >= this.bounds.left && x <= this.bounds.right &&
+        y >= this.bounds.top && y <= this.bounds.bottom) {
+      return this.items[y - itemsTop][x - itemsLeft];
+    }
   }
 
   map<U>(fn: MapFn<T, U>): QuadTree<U> {
@@ -156,6 +165,25 @@ class QuadTreeLeaf<T> extends QuadTree<T> {
 class QuadTreeNode<T> extends QuadTree<T> {
   constructor(bounds: Rect, public quads: QuadTree<T>[][]) {
     super(bounds);
+  }
+
+  get(x: number, y: number): T {
+    if (x >= this.bounds.left && x <= this.bounds.right &&
+        y >= this.bounds.top && y <= this.bounds.bottom) {
+      let row;
+      if (this.quads.length === 2 &&
+          (y - this.bounds.top) > (this.bounds.bottom - this.bounds.top) / 2) {
+        row = this.quads[1]
+      } else {
+        row = this.quads[0];
+      }
+      if (row.length === 2 &&
+          (x - this.bounds.left) > (this.bounds.right - this.bounds.left) / 2) {
+        return row[1].get(x, y);
+      } else {
+        return row[0].get(x, y);
+      }
+    }
   }
 
   mapInto<U>(newItems: U[][], fn: MapFn<T, U>): QuadTree<U> {

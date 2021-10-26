@@ -144,7 +144,7 @@ export default function initializePlayer(level, options) {
       scale(1)
     ]);
 
-    hint.scaleTo((width() * 0.4) / hint.width)
+    hint.scaleTo((width() * 0.4) / hint.width);
 
     // All event handler functions return another function that disables the event when it is called
     const stopAction = player.action(() => {
@@ -158,7 +158,14 @@ export default function initializePlayer(level, options) {
         destroy(hint);
         // stop the action, since it will get recreated next time the player collides with the tree.
         stopAction();
-      }
+      } else if (s.compatibleTools &&
+                 s.compatibleTools.includes(getEquippedTool())) {
+          hint.text = hintText = "Press E to interact.";
+          hint.scaleTo((width() * 0.4) / hint.width);
+        } else {
+          hint.text = hintText = "Press a number key to\nselect the appropriate\ntool.";
+          hint.scaleTo((width() * 0.4) / hint.width);
+        }
     })
     // add an player.action(() => { }) /* oops */ here and check if the player is no longer colliding with the tree, in which case, destroy(hint)
   })
@@ -369,8 +376,19 @@ export default function initializePlayer(level, options) {
     every("Pele", (p) => {
       if (player.isColliding(p)) {
         if (p.is("Pele")) {
-          if (woodCount >= 1) {
+          if (woodCount >= 7) {
             go("win");
+          } else {
+            const warning = add([
+              text("You have not collected enough wood!\nReturn when you have 7 wood.", { size: 32 }),
+              pos(20, height() * 0.25),
+              fixed(),
+              layer("overlay"),
+              scale(1),
+              lifespan(10, { fade: 1 })
+            ]);
+      
+            warning.scaleTo((width() - 40) / warning.width);
           }
         }
       }
@@ -380,6 +398,7 @@ export default function initializePlayer(level, options) {
 
   clicks("breakable", (b) => {
     if (shovelEquipped) {
+      b.trigger("mined");
       destroy(b);
       play("Shoveling(Purplemaia_Kajam_SFX)", { volume: 0.5 });
     }

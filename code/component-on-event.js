@@ -3,7 +3,7 @@ export default function onEvent(event, cb) {
 	return {
 		id: "on",
 		add() {
-			this.on(event, cb);
+			this.on(event, (...args) => cb(this, ...args));
 		},
 	};
 }

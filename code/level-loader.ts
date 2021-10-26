@@ -224,7 +224,9 @@ class FastLevel implements Level {
             if (!this._loadedQuads[key]) {
               // console.log(`load: ${key}`);
               this._loadedQuads[key] =
-                quad.map((sym, x, y) => this.spawn(sym, x, y))
+                quad.map((sym, x, y) => this.spawn(sym, x, y));
+
+              this._loadedQuads[key].iterateAll(obj => obj?.trigger("quadLoaded"));
             }
           }
         }
@@ -253,6 +255,18 @@ class FastLevel implements Level {
         this._offset.y + posOrX.y * this.options.height
       );
     }
+  }
+
+  getTile(pos: Vec2): Character | undefined {
+    for (let key of Object.getOwnPropertyNames(this._loadedQuads)) {
+      let quad = this._loadedQuads[key]
+      if (pos.x >= quad.bounds.left && pos.x <= quad.bounds.right &&
+          pos.y >= quad.bounds.top && pos.y <= quad.bounds.bottom) {
+        return quad.get(pos.x, pos.y);
+      }
+    }
+
+    return undefined;
   }
 
   // TODO: does there need to be a way to clean up things spawned into the level
