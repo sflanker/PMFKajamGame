@@ -10,7 +10,7 @@ export default function initializeLevelOne() {
   scene("level-one", async () => {
     console.log('initializing level-one');
     const music = play("Venture(IGT)", {
-      volume: 0.5,
+      volume: 0.3,
       loop: true
     });
 
@@ -79,6 +79,11 @@ export default function initializeLevelOne() {
           { resourceType: "wood" },
           "resource"
         ],
+        ".": () => [
+          sprite("Tile-Dug-Sand", TileSpriteOpts),
+          origin("bot"),
+          "hole"
+        ]
       },
       {
         "#000000-=": () => [
@@ -94,14 +99,19 @@ export default function initializeLevelOne() {
           area(),
           solid(),
         ],
-        "#fdee73-*": () => [
+        "#fdee73-*": preventRespawn("tree", (_, prevent) => [
           sprite("Tile-Sand", TileSpriteOpts),
           origin("bot"),
           area(),
           solid(),
+          onEvent("mined", (t) => {
+            // TODO: randomly drop shells?
+            prevent();
+            // Add a dug sand sprite
+            level.spawn(".", )
+          }),
           "breakable",
-          // TODO: randomly drop shells?
-        ],
+        ]),
         "#3d3838": () => [
           sprite("Tile-Rock", TileSpriteOpts),
           origin("bot"),
@@ -166,7 +176,7 @@ export default function initializeLevelOne() {
           scale(2),
           area(),
           layer("foreground-scenery"),
-          on("mined", prevent),
+          onEvent("mined", prevent),
           "searchable",
           { resourceType: "wood", compatibleTools: ["axe"] },
         ]),
@@ -177,6 +187,10 @@ export default function initializeLevelOne() {
           layer("background-scenery"),
           "hale"
         ],
+        "#00d9ee": () => [
+          sprite("portal"),
+          origin("bot"),
+        ]
       }
     );
 
