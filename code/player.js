@@ -381,7 +381,7 @@ export default function initializePlayer(level, options) {
   clicks("breakable", (b) => {
     if (shovelEquipped) {
       destroy(b);
-      play("Shoveling(Purplemaia_Kajam_SFX)");
+      play("Shoveling(Purplemaia_Kajam_SFX)", { volume: 0.5 });
     }
   })
 
